@@ -1,0 +1,1244 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#141512">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Complex App · Prototipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141512; --s1:#1c1d19; --s2:#24261f; --s3:#2f3129; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.15);
+  --tx:#f4f2ea; --mu:#aeb0a2; --mu2:#979a8c;
+  --g:#3ea64b; --g2:#63d070; --gd:rgba(62,166,75,.17);
+  --a:#f5a93b; --ad:rgba(245,169,59,.16);
+  --r:#ef6a5c; --rd:rgba(239,106,92,.12);
+  --disp:'Barlow Condensed',system-ui,sans-serif;
+  --body:'Inter',system-ui,-apple-system,sans-serif;
+  --rad:18px; --top:104px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--tx);font-family:var(--body);font-size:15px;line-height:1.45;min-height:100dvh;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input,textarea,select{font:inherit;color:var(--tx);background:var(--s2);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:12px 14px;width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--g)}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.disp{font-family:var(--disp);letter-spacing:.01em}
+.mu{color:var(--mu)} .mu2{color:var(--mu2)} .g{color:var(--g2)} .a{color:var(--a)} .r{color:var(--r)}
+.sm{font-size:13px} .xs{font-size:11.5px} .b{font-weight:600}
+.row{display:flex;align-items:center;gap:10px} .between{justify-content:space-between} .wrap{flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:10px}
+.grow{flex:1;min-width:0}
+
+/* ---------- barra superior ---------- */
+.top{position:sticky;top:0;z-index:40;background:rgba(20,21,18,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 10px) 16px 0}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:34px;height:34px;flex:none}
+.brand b{font-family:var(--disp);font-size:22px;font-weight:800;letter-spacing:.04em}
+.brand span{font-size:11px;color:var(--mu);border:1px solid var(--line2);padding:2px 8px;border-radius:99px}
+.reset{margin-left:auto;font-size:12px;color:var(--mu);padding:6px 10px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+@media (max-width:440px){.brand span{display:none}}
+.roles{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:10px -16px 0;padding:0 16px}
+.roles::-webkit-scrollbar{display:none}
+.roles button{white-space:nowrap;padding:10px 12px 12px;font-size:14px;font-weight:600;color:var(--mu);border-bottom:2px solid transparent}
+.roles button.on{color:var(--tx);border-color:var(--a)}
+.view{display:none}.view.on{display:block}
+
+/* ---------- comunes ---------- */
+.card{background:var(--s1);border:1px solid var(--line);border-radius:var(--rad);padding:16px}
+.card.hi{background:linear-gradient(160deg,#25331f 0%,var(--s1) 70%);border-color:rgba(99,208,112,.25);position:relative;overflow:hidden}
+.card.hi::after{content:'';position:absolute;right:-70px;top:-70px;width:220px;height:220px;border-radius:50%;border:36px solid rgba(62,166,75,.08);border-right-color:transparent;transform:rotate(45deg);pointer-events:none}
+.card.hi>*{position:relative;z-index:1}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;min-height:40px;border-radius:99px;background:var(--s2);border:1px solid var(--line);font-size:13px;font-weight:500;white-space:nowrap}
+.chip.on{background:var(--g);border-color:var(--g);color:#0d1a0f;font-weight:700}
+.chip.amb{background:var(--ad);border-color:rgba(245,169,59,.4);color:var(--a)}
+.chip.grn{background:var(--gd);border-color:rgba(99,208,112,.35);color:var(--g2)}
+.chip.red{background:var(--rd);border-color:rgba(239,106,92,.4);color:var(--r)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:14px;font-weight:700;background:var(--s3);border:1px solid var(--line2);font-size:14px}
+.btn.pri{background:var(--g);border-color:var(--g);color:#0b170d}
+.btn.amb{background:var(--a);border-color:var(--a);color:#241503}
+.btn.ghost{background:transparent}
+.btn.red{background:var(--rd);border-color:rgba(239,106,92,.5);color:var(--r)}
+.fld{display:block;margin-top:12px}.fld>span{display:block;font-size:12px;color:var(--mu);margin-bottom:5px}
+.stepper{display:flex;align-items:center;gap:8px}.stepper button{width:44px;height:44px;border-radius:12px;background:var(--s3);font-size:20px;flex:none}.stepper input{text-align:center}
+.secbox{border-top:1px solid var(--line);margin-top:18px;padding-top:4px}
+.fzr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.fzr:last-child{border-bottom:0}
+.kgb{font-family:var(--disp);font-size:26px;font-weight:800;padding:4px 12px;border-radius:12px;background:var(--gd);color:var(--g2);line-height:1.05;text-align:center;flex:none}
+.kgb small{display:block;font-family:var(--body);font-size:10px;font-weight:600;color:var(--mu)}
+.fzE{display:grid;grid-template-columns:1fr 1fr 1fr 44px;gap:6px;align-items:end;padding:10px;border:1px solid var(--line);border-radius:14px;margin-top:8px;background:var(--s2)}
+.fzE>select{grid-column:1/-1}
+.fzE label span{display:block;font-size:11px;color:var(--mu);margin-bottom:3px}
+.fzE input,.fzE select{padding:10px;background:var(--s1)}
+.fzE .del{height:42px;border-radius:10px;background:var(--rd);color:var(--r);font-weight:700}
+.prog{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.prog button{padding:10px 4px;border-radius:14px;background:var(--s1);border:1.5px solid var(--line);font-size:12.5px;font-weight:600;text-align:center;line-height:1.2}
+.prog button .e{display:block;font-size:20px;margin-bottom:2px}
+.prog button .e .ico{width:24px;height:24px}
+.prog button small{display:block;font-size:10.5px;font-weight:500;color:var(--mu);margin-top:1px}
+.prog.mini button{padding:8px 4px;display:flex;align-items:center;justify-content:center;gap:6px}
+.prog.mini button .e{display:inline;margin:0}
+.prog.mini button .e .ico{width:18px;height:18px}
+.prog.mini button small{display:none}
+.prog button.on{border-color:var(--a);background:var(--ad);color:var(--a)}
+.btn.full{width:100%}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:11px;min-height:40px}
+.linkish{display:block;text-align:left;width:100%;padding:10px 0 2px;color:var(--mu);font-size:12.5px;min-height:40px}
+.ico{width:20px;height:20px;vertical-align:-4px;flex:none}
+.demo{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;padding:2px 6px;border-radius:5px;background:rgba(245,169,59,.18);color:var(--a);vertical-align:middle;margin-right:4px}
+.aviso-x{min-width:44px;min-height:44px;margin:-12px -12px -12px 0;color:var(--mu)}
+.btn:disabled{opacity:.45}
+.lbl{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mu2)}
+.h1{font-family:var(--disp);font-weight:800;font-size:34px;line-height:1;letter-spacing:.01em}
+.h2{font-family:var(--disp);font-weight:700;font-size:24px;line-height:1.05}
+.h3{font-weight:700;font-size:16px}
+.bar{height:6px;border-radius:9px;background:var(--s3);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--g);border-radius:9px}
+.bar.amb i{background:var(--a)}
+.sep{height:1px;background:var(--line);margin:12px 0}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;background:var(--s3);color:var(--tx)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+
+/* ---------- atleta (teléfono) ---------- */
+.phone{max-width:440px;margin:0 auto;padding:16px 16px calc(100px + env(safe-area-inset-bottom));min-height:calc(100dvh - var(--top))}
+@media (min-width:700px){
+  .phone{margin:20px auto;border:1px solid var(--line2);border-radius:34px;height:844px;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:0;background:var(--bg);box-shadow:0 30px 80px rgba(0,0,0,.5);position:relative;scrollbar-width:none}
+  .phone::-webkit-scrollbar{display:none}
+  .tabbar{position:sticky!important;bottom:0;margin:20px -16px 0;border-radius:0 0 34px 34px}
+}
+/* Modo prueba (versión para clientes): solo la app del atleta + botón de opinión */
+body.prueba .top,body.prueba #demoFab{display:none!important}
+body.prueba .phone{min-height:100dvh;padding-top:calc(env(safe-area-inset-top) + 16px)}
+.mis{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.mis:last-child{border-bottom:0}
+.mis i{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);display:grid;place-items:center;font-style:normal;font-size:13px;flex:none}
+.mis.ok i{background:var(--g);border-color:var(--g);color:#0b170d}
+.mis.ok span{color:var(--mu);text-decoration:line-through}
+/* en el celular, la app del atleta ocupa toda la pantalla; la demo se abre con el botón DEMO */
+#demoFab{position:fixed;left:10px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:35;display:none;min-height:34px;padding:4px 10px;font-size:11px;opacity:.92;box-shadow:0 6px 20px rgba(0,0,0,.45)}
+@media (max-width:699px){
+  body.v-atleta .top{display:none}
+  body.v-atleta .phone{min-height:100dvh;padding-top:calc(env(safe-area-inset-top) + 16px)}
+  body.v-atleta #demoFab{display:inline-flex}
+}
+.scr{display:none;flex-direction:column;gap:14px}.scr.on{display:flex}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:space-around;background:rgba(28,29,25,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 6px calc(8px + env(safe-area-inset-bottom));max-width:440px;margin:0 auto}
+.tabbar button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--mu2);padding:4px 8px;min-width:58px}
+.tabbar button svg{width:24px;height:24px}
+.tabbar button.on{color:var(--g2)}
+.hello{display:flex;align-items:center;justify-content:space-between}
+.me-btn{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--a),#e07a2c);color:#241503;font-weight:800;display:grid;place-items:center}
+.next-time{font-family:var(--disp);font-size:54px;font-weight:800;line-height:.9}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:12px}
+.stat b{display:block;font-family:var(--disp);font-size:30px;font-weight:800;line-height:1}
+.stat span{font-size:11.5px;color:var(--mu)}
+.event{border-radius:var(--rad);padding:18px;background:radial-gradient(120% 140% at 100% 0%,rgba(245,169,59,.35),transparent 55%),linear-gradient(160deg,#2a2b22,#1a1b16);border:1px solid rgba(245,169,59,.3);position:relative;overflow:hidden}
+.event .big{font-family:var(--disp);font-size:40px;font-weight:800;line-height:.9;text-transform:uppercase}
+.event .big em{font-style:normal;color:var(--a)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.week button{display:flex;flex-direction:column;align-items:center;padding:8px 0;border-radius:14px;background:var(--s1);border:1px solid var(--line);font-size:11px;color:var(--mu)}
+.week button b{font-family:var(--disp);font-size:22px;color:var(--tx);line-height:1.1}
+.week button.on{background:var(--g);border-color:var(--g);color:#0b170d}
+.week button.on b{color:#0b170d}
+.week button:disabled{opacity:.35}
+.cls{display:grid;grid-template-columns:62px 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--s1);border:1px solid var(--line)}
+.cls.mine{border-color:rgba(99,208,112,.5);background:linear-gradient(90deg,rgba(62,166,75,.13),var(--s1))}
+.cls .hr{font-family:var(--disp);font-size:26px;font-weight:700;line-height:1}
+.cls .bar{margin-top:7px;height:4px}
+.cls.past{background:var(--bg)}
+.cls.past .hr,.cls.past b{color:var(--mu)}
+.cls.past .bar i{background:var(--mu2)}
+.cls>div:last-child{display:flex;justify-content:flex-end}
+.cls>div:last-child>*{min-width:112px;justify-content:center;display:inline-flex;align-items:center;min-height:40px}
+.cls.pop{animation:pop .45s ease}
+@keyframes pop{50%{transform:scale(1.04)}}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:6px}
+.t-cf{background:var(--gd);color:var(--g2)} .t-hib{background:var(--ad);color:var(--a)} .t-hal{background:rgba(120,160,255,.15);color:#9fb8ff} .t-teams{background:rgba(255,255,255,.1);color:#fff} .t-open{background:rgba(255,255,255,.07);color:var(--mu)}
+.wod-sec{padding:14px 0;border-top:1px solid var(--line)}
+.wod-sec:first-child{border-top:0;padding-top:0}
+.mov{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:16px}
+.mov:last-child{border-bottom:0}
+.mov button{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.35);font-size:14px;color:var(--mu);flex:none}
+.lb{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.lb:last-child{border-bottom:0}
+.lb .pos{font-family:var(--disp);font-size:22px;font-weight:800;color:var(--mu2);text-align:center}
+.lb.me{background:var(--gd);margin:0 -10px;padding:10px;border-radius:12px;border:0}
+.lb .sc{font-family:var(--disp);font-size:22px;font-weight:700}
+.plates{display:flex;align-items:center;justify-content:center;gap:3px;height:130px;margin:8px 0}
+.plates .sleeve{width:70px;height:12px;background:linear-gradient(#cfd2c6,#8d9086);border-radius:3px}
+.plates .collar{width:10px;height:26px;background:#9a9d92;border-radius:2px}
+.plates .p{width:16px;border-radius:4px;box-shadow:inset -2px 0 0 rgba(0,0,0,.25)}
+.pct{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.pct div{background:var(--s2);border-radius:10px;padding:8px;text-align:center}
+.pct b{display:block;font-family:var(--disp);font-size:20px}
+.pct span{font-size:11px;color:var(--mu)}
+.heat{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.heat i{aspect-ratio:1;border-radius:4px;background:var(--s3);display:block}
+.heat i.y{background:var(--g)}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge{text-align:center;padding:12px 6px;border-radius:16px;background:var(--s1);border:1px solid var(--line)}
+.badge .ic{font-size:28px;line-height:1.1}
+.badge b{display:block;font-size:12px;margin-top:4px}
+.badge span{font-size:10.5px;color:var(--mu)}
+.badge.lock .ic{opacity:.35;filter:grayscale(1)}
+.badge.lock b{color:var(--mu)}
+.reels{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:10px -4px 0;padding:0 4px}
+.reels::-webkit-scrollbar{display:none}
+.reel{flex:none;width:118px;aspect-ratio:9/16;border-radius:16px;position:relative;overflow:hidden;padding:10px;display:flex;flex-direction:column;justify-content:flex-end;text-align:left;font-family:var(--disp);font-weight:700;font-size:18px;line-height:1.02;text-transform:uppercase;color:#fff;border:1px solid var(--line2)}
+.reel::after{content:'▶';position:absolute;top:8px;right:10px;font-size:13px;opacity:.85}
+.reel small{font-family:var(--body);font-size:10px;font-weight:600;text-transform:none;opacity:.8;margin-top:4px}
+.story{display:block;width:62%;max-width:240px;margin:6px auto 0;border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.5);aspect-ratio:9/16;background:var(--s2)}
+.org{display:grid;grid-template-columns:28px 1fr 64px 64px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.org:last-child{border-bottom:0}
+.org .bar{height:8px}
+.post{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.post:last-child{border-bottom:0}
+.fist{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;min-height:40px;border-radius:99px;background:var(--s2);font-size:13px;margin-top:8px}
+.fist.on{background:var(--ad);color:var(--a)}
+.ready{display:flex;align-items:center;gap:12px}
+.ready .light{width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:20px}
+input[type=range]{padding:0;border:0;background:transparent;accent-color:var(--g);height:30px}
+
+/* ---------- hoja inferior y avisos ---------- */
+.sheet-wrap{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:var(--tx);display:none;align-items:flex-end;justify-content:center}
+.sheet-wrap[open]{display:flex;animation:fade .2s}
+.sheet-wrap::backdrop{background:rgba(0,0,0,.55)}
+.sheet-x{position:absolute;top:6px;right:8px;width:44px;height:44px;color:var(--mu);font-size:18px;border-radius:12px}
+.sheet{position:relative;width:100%;max-width:480px;max-height:90dvh;overflow:auto;background:var(--s1);border-radius:26px 26px 0 0;border:1px solid var(--line2);padding:10px 18px calc(22px + env(safe-area-inset-bottom));animation:up .28s cubic-bezier(.2,.8,.2,1)}
+.sheet .grab{width:42px;height:5px;border-radius:9px;background:var(--line2);margin:0 auto 14px}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translate(-50%,-140%);z-index:99;background:#f4f2ea;color:#151612;padding:12px 18px;border-radius:16px;font-weight:600;font-size:14px;box-shadow:0 10px 40px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.8,.2,1);max-width:92vw;text-align:center}
+.toast.on{transform:translate(-50%,0)}
+
+/* ---------- vistas de escritorio ---------- */
+.desk{max-width:1240px;margin:0 auto;padding:20px 16px 60px}
+.grid{display:grid;gap:14px}
+@media (min-width:900px){.g-coach{grid-template-columns:260px 1fr 340px}.g-own{grid-template-columns:repeat(12,1fr)}}
+.span4{grid-column:span 4}.span6{grid-column:span 6}.span8{grid-column:span 8}.span12{grid-column:span 12}.span3{grid-column:span 3}
+@media (max-width:899px){.g-own>*{grid-column:1/-1!important}}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (min-width:900px){.kpis{grid-template-columns:repeat(6,1fr)}}
+.kpi{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:14px}
+.kpi b{display:block;font-family:var(--disp);font-size:34px;font-weight:800;line-height:1;margin:6px 0 2px}
+.kpi .d{font-size:12px}
+.kpi.hero{background:linear-gradient(160deg,#25331f,var(--s1));border-color:rgba(99,208,112,.25)}
+.kpi.hero b{font-size:42px}
+.clist button{width:100%;text-align:left;display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;border:1px solid transparent}
+.clist button.on{background:var(--s2);border-color:var(--line2)}
+.clist .hr{font-family:var(--disp);font-size:22px;font-weight:700;width:54px}
+@media (max-width:899px){.clist{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:6px!important}.clist::-webkit-scrollbar{display:none}.clist>.lbl{display:none}.clist button{flex:none;width:auto;padding:8px 12px}.clist .hr{width:auto}}
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.ath{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:14px;background:var(--s1);border:1px solid var(--line)}
+.ath.in{border-color:rgba(99,208,112,.45);background:linear-gradient(135deg,rgba(62,166,75,.12),var(--s1))}
+.ath.new{border-color:rgba(245,169,59,.55);background:linear-gradient(135deg,rgba(245,169,59,.1),var(--s1))}
+.hue{margin-left:auto;flex:none;text-align:right;font-size:11px;line-height:1.25;color:var(--mu2)}
+.hue b{display:block;font-family:var(--disp);font-size:18px;color:var(--mu2)}
+.ath.in .hue,.ath.in .hue b{color:var(--g2)}
+.hue.no,.hue.no b{color:var(--r)}
+.fp{display:grid;place-items:center;width:120px;height:120px;border-radius:50%;margin:10px auto;background:radial-gradient(circle,rgba(99,208,112,.25),transparent 70%);font-size:64px}
+.flags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.flags span{font-size:11px;padding:2px 7px;border-radius:6px;background:var(--s2);color:var(--mu)}
+.flags .f-new{background:var(--ad);color:var(--a)} .flags .f-inj{background:var(--rd);color:var(--r)} .flags .f-ok{background:var(--gd);color:var(--g2)}
+.hm{display:grid;grid-template-columns:44px repeat(8,1fr);gap:4px;font-size:11px}
+.hm i{display:grid;place-items:center;height:30px;border-radius:7px;font-style:normal;font-size:11px;font-weight:600}
+.hm .h{color:var(--mu2);text-align:center}
+.funnel div{display:flex;align-items:center;gap:10px;margin:8px 0}
+.funnel .fb{height:30px;border-radius:9px;background:var(--g);display:flex;align-items:center;padding:0 10px;font-weight:700;color:#0b170d;font-size:13px;white-space:nowrap}
+.risk{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.risk:last-child{border-bottom:0}
+.insight{display:flex;gap:12px;padding:12px;border-radius:14px;background:var(--s2);margin-top:8px}
+.insight .ic{font-size:20px}
+
+/* ---------- TV ---------- */
+.tv{min-height:calc(100dvh - var(--top));padding:22px;display:grid;gap:18px;grid-template-columns:1fr;background:radial-gradient(80% 60% at 50% 0%,#20301d,transparent),var(--bg)}
+@media (min-width:1000px){.tv{grid-template-columns:1.5fr 1fr;grid-template-rows:1fr auto}}
+.tv .panel{background:rgba(28,29,25,.8);border:1px solid var(--line);border-radius:24px;padding:24px}
+.tv .wname{font-family:var(--disp);font-size:58px;font-weight:800;text-transform:uppercase;line-height:.9}
+.tv .tmov{font-family:var(--disp);font-size:32px;font-weight:600;padding:8px 0;border-bottom:1px solid var(--line)}
+.tv .lbt{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;font-size:20px;padding:9px 0;border-bottom:1px solid var(--line)}
+.tv .lbt b{font-family:var(--disp);font-size:28px}
+.ticker{grid-column:1/-1;overflow:hidden;white-space:nowrap;border-radius:16px;background:var(--g);color:#0b170d;font-weight:800;font-family:var(--disp);font-size:26px;letter-spacing:.03em;padding:10px 0}
+.ticker span{display:inline-block;padding-left:100%;animation:tick 38s linear infinite}
+.ticker:hover span,.ticker:active span{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.ticker span{animation:none;padding-left:16px;white-space:normal}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@keyframes tick{to{transform:translateX(-100%)}}
+
+/* ---------- clase gratis ---------- */
+.lead{max-width:520px;margin:0 auto;padding:20px 16px 60px}
+.hero{border-radius:24px;padding:26px 20px;background:radial-gradient(100% 120% at 0% 0%,rgba(62,166,75,.35),transparent 60%),radial-gradient(80% 90% at 100% 100%,rgba(245,169,59,.25),transparent 60%),var(--s1);border:1px solid var(--line2);margin-bottom:14px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:16px;background:var(--s1);border:1.5px solid var(--line);margin-bottom:8px}
+.opt.on{border-color:var(--g);background:var(--gd)}
+.opt .e{font-size:24px}
+.steps{display:flex;gap:6px;margin:6px 0 16px}
+.steps i{flex:1;height:4px;border-radius:9px;background:var(--s3)}
+.steps i.on{background:var(--a)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--mu);margin:10px 0}
+.check input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--g)}
+
+/* ---------- análisis ---------- */
+.an h2{font-family:var(--disp);font-size:30px;font-weight:800;margin:30px 0 12px;line-height:1}
+.an p,.an li{color:#dcdbd2}
+.an ul{padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (min-width:800px){.facts{grid-template-columns:repeat(4,1fr)}}
+.mapa{display:grid;gap:12px}
+@media (min-width:900px){.mapa{grid-template-columns:repeat(3,1fr)}}
+.mapa .card li{font-size:14px}
+.src{font-size:12px;color:var(--mu2);margin-top:30px}
+.src a{color:var(--mu)}
+</style>
+</head>
+<body>
+
+<header class="top" id="top">
+  <div class="brand">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#2a2b23"/><path d="M69.8 30.2 A28 28 0 1 0 69.8 69.8" fill="none" stroke="#3ea64b" stroke-width="15"/><circle cx="51" cy="50" r="13.5" fill="#f5a93b"/></svg>
+    <b>COMPLEX</b><span>Prototipo · Corola</span>
+    <button class="reset" id="reset">Reiniciar demo</button>
+  </div>
+  <nav class="roles" id="roles" aria-label="Vistas de la demo">
+    <button data-v="atleta" class="on"><span aria-hidden="true">📱</span> Atleta</button>
+    <button data-v="coach"><span aria-hidden="true">📋</span> Coach</button>
+    <button data-v="duenio"><span aria-hidden="true">📊</span> Dueño</button>
+    <button data-v="tv"><span aria-hidden="true">📺</span> Pantalla del box</button>
+    <button data-v="gratis"><span aria-hidden="true">🎟️</span> Clase gratis</button>
+    <button data-v="analisis"><span aria-hidden="true">🔍</span> Análisis</button>
+  </nav>
+</header>
+
+<main>
+<!-- ================= ATLETA ================= -->
+<section class="view on" id="v-atleta">
+  <div class="phone" id="phone">
+    <div class="scr on" id="s-hoy"></div>
+    <div class="scr" id="s-clases"></div>
+    <div class="scr" id="s-wod"></div>
+    <div class="scr" id="s-progreso"></div>
+    <div class="scr" id="s-comunidad"></div>
+    <nav class="tabbar" id="tabbar" aria-label="Secciones">
+      <button data-s="hoy" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Hoy</button>
+      <button data-s="clases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Clases</button>
+      <button data-s="wod"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12h3M19 12h3M6 7v10M18 7v10M9 9v6M15 9v6M9 12h6"/></svg>WOD</button>
+      <button data-s="progreso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></svg>Progreso</button>
+      <button data-s="comunidad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9" r="2.6"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 2 6 5.5"/></svg>Comunidad</button>
+    </nav>
+  </div>
+</section>
+
+<!-- ================= COACH ================= -->
+<section class="view" id="v-coach"><div class="desk" id="coach"></div></section>
+
+<!-- ================= DUEÑO ================= -->
+<section class="view" id="v-duenio"><div class="desk" id="duenio"></div></section>
+
+<!-- ================= TV ================= -->
+<section class="view" id="v-tv"><div class="tv" id="tv"></div></section>
+
+<!-- ================= CLASE GRATIS ================= -->
+<section class="view" id="v-gratis"><div class="lead" id="gratis"></div></section>
+
+<!-- ================= ANÁLISIS ================= -->
+<section class="view" id="v-analisis"><div class="desk an" id="analisis"></div></section>
+</main>
+
+<dialog class="sheet-wrap" id="sheetWrap" aria-label="Ventana"><div class="sheet" id="sheet"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<button id="demoFab" class="chip amb" aria-label="Menú de la demo">DEMO ▾</button>
+
+<script>
+/* =========================================================
+   Complex App · prototipo de Corola
+   Todo vive en este archivo. Los datos son de ejemplo y se
+   guardan sólo en este navegador (localStorage).
+   ========================================================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const LS='complex-proto-v1';
+function rnd(s){let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return ((h>>>0)%10000)/10000}
+const mxn=n=>'$'+Math.round(n).toLocaleString('es-MX');
+const fmt=s=>{s=Math.max(0,s);const m=Math.floor(s/60),x=Math.floor(s%60);return m+':'+String(x).padStart(2,'0')};
+const ini=n=>String(n).split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+/* Todo texto que escribe una persona pasa por esc() antes de pintarse */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* Reloj de la demo: lunes 5 de octubre de 2026, 6:40 a.m. */
+const AHORA={dia:0,min:6*60+40};
+const DIAS=[{n:'Lun',d:5,l:'Lunes 5 oct'},{n:'Mar',d:6,l:'Martes 6 oct'},{n:'Mié',d:7,l:'Miércoles 7 oct'},{n:'Jue',d:8,l:'Jueves 8 oct'},{n:'Vie',d:9,l:'Viernes 9 oct'},{n:'Sáb',d:10,l:'Sábado 10 oct'},{n:'Dom',d:11,l:'Domingo 11 oct',cerrado:true}];
+const TIPOS={cf:'CrossFit',hib:'Híbrido',hal:'Halterofilia',teams:'Teams',open:'Open box'};
+
+function DEF(){return{
+  v:4,
+  me:{nombre:'Mariana',ap:'R.',nivel:'Intermedio',plan:'Ilimitado · CrossFit + Gym',vence:'28 oct',lesion:'Hombro izquierdo: evitar overhead pesado',clasesMes:3,racha:6,total:96},
+  reservas:['0-0700-cf','2-0700-hib'],espera:[],liberados:{},
+  prs:{
+    'Back squat':[['Mar',62],['May',68],['Jun',72],['Jul',77],['Ago',80],['Sep',85]],
+    'Deadlift':[['Mar',85],['May',95],['Jul',102],['Sep',110]],
+    'Clean':[['Abr',48],['Jun',52],['Ago',57],['Sep',60]],
+    'Snatch':[['Abr',35],['Jul',40],['Sep',45]],
+    'Front squat':[['May',58],['Jul',64],['Sep',70]],
+    'Strict press':[['Abr',33],['Jul',37],['Sep',40]]
+  },
+  bench:[['Fran','6:12','21-15-9 thrusters y pull-ups'],['Grace','3:48','30 clean & jerks'],['Cindy','14 rondas','AMRAP 20′'],['Helen','11:20','3 rondas run, KB, pull-ups'],['Murph','—','Pendiente: ¿noviembre?']],
+  prog:'cf',
+  wods:{
+    cf:{nombre:'Sudar sabroso',cal:'3 rondas: 200 m remo, 10 air squats, 8 PVC pass-through, 30″ hollow hold',calMin:8,
+      fz:[{mov:'Back squat',ser:3,rep:'5',pct:65},{mov:'Back squat',ser:3,rep:'3',pct:75},{mov:'Back squat',ser:2,rep:'2',pct:82}],
+      tipo:'AMRAP',min:14,
+      RX:['12 Wall balls (9/6 kg)','10 Box jumps (24/20")','8 Pull-ups','200 m Run'],
+      Intermedio:['12 Wall balls (6/4 kg)','10 Box step-ups (20")','8 Jumping pull-ups','200 m Run'],
+      Principiante:['10 Wall balls (4/3 kg)','10 Step-ups (16")','8 Ring rows','150 m Run o 250 m Remo'],
+      nota:'La técnica siempre va primero. Busca un ritmo que puedas sostener los 14 minutos: nadie gana el WOD en el minuto 2.'},
+    hib:{nombre:'Motor y estaciones',cal:'10′ trote suave, movilidad de cadera y tobillo, 3 × 20 m de zancadas',calMin:10,
+      fz:[{mov:'Deadlift',ser:4,rep:'6',pct:60}],
+      tipo:'FOR TIME',min:40,
+      RX:['1 km Run','50 m Sled push (pesado)','1 km Run','50 m Sled pull (pesado)','1 km Run','80 m Burpee broad jumps','1 km Run','100 Wall balls (9/6 kg)'],
+      Intermedio:['1 km Run','50 m Sled push (medio)','1 km Run','50 m Sled pull (medio)','1 km Run','80 m Burpee broad jumps','1 km Run','75 Wall balls (6/4 kg)'],
+      Principiante:['600 m Run','25 m Sled push (ligero)','600 m Run','25 m Sled pull (ligero)','600 m Run','40 m Burpee broad jumps','600 m Run','50 Wall balls (4/3 kg)'],
+      nota:'Medio simulador rumbo al 17 de octubre. Anota tu tiempo: con eso armamos tu ritmo para el evento.'},
+    hal:{nombre:'Técnica y potencia',cal:'Barra sola: 2 rondas de Burgener warm-up, 5 snatch balance y 5 muscle clean',calMin:10,
+      fz:[{mov:'Snatch',ser:5,rep:'2',pct:70},{mov:'Clean',ser:5,rep:'2',pct:75},{mov:'Front squat',ser:4,rep:'3',pct:75}],
+      tipo:'CARGA MÁX',min:12,
+      RX:['3 × 5 Pull de snatch al 95% del snatch','3 × 10 Hip thrust','3 × 30″ Hollow hold'],
+      Intermedio:['3 × 5 Pull de snatch al 85% del snatch','3 × 10 Hip thrust','3 × 30″ Hollow hold'],
+      Principiante:['3 × 8 Pull de snatch con barra ligera','3 × 10 Hip thrust','3 × 20″ Hollow hold'],
+      nota:'Calidad antes que carga: si la técnica se rompe, bajamos 5%. Registra tu levantamiento más pesado del día.'}
+  },
+  escala:null,
+  mios:{cf:null,hib:null,hal:null},
+  ready:null,
+  feed:[
+    {id:1,who:'Coach Beto',txt:'Sofía L. sacó su primer muscle-up en la clase de 7:00 🎉 Aquí se celebra cada pequeña victoria.',t:'hace 2 h',n:23},
+    {id:2,who:'Complex',txt:'Podios de nuestros coaches y atletas este fin de semana 🥇🥇🥉 #WeAreComplex',t:'ayer',n:58},
+    {id:3,who:'Pau M.',txt:'Nuevo PR en deadlift: 120 kg 💪 gracias Coach Luis por la paciencia con la técnica.',t:'ayer',n:31},
+    {id:4,who:'Cafetería Complex',txt:'Nuevo en la barra: cold brew con proteína para después del WOD ☕️',t:'sáb',n:12}],
+  choca:{},
+  evento:null,
+  teams:false,
+  pedidos:[],
+  prospectos:[],
+  huella:{},hN:0,
+  cls:{},avisos:[],compartidas:0,
+  reto:{hechas:3,meta:20},
+};}
+let S;try{const g=JSON.parse(localStorage.getItem(LS));if(g&&g.v===4){const d=DEF();S={...d,...g,me:{...d.me,...g.me},wods:{...d.wods,...g.wods},mios:{...d.mios,...g.mios}}}}catch(e){}
+if(!S)S=DEF();
+function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+
+/* ---------- horario ---------- */
+function mk(di,h,t,c,cap){const id=di+'-'+h.replace(':','')+'-'+t;let base=Math.round(cap*(.42+.5*rnd(id)));
+  if(id==='0-1900-cf')base=cap; if(id==='0-0700-cf')base=13; if(id==='0-0600-cf')base=16;
+  const o=(S.cls||{})[id]||{};
+  return{id,di,h,t,n:TIPOS[t],c:o.c||c,cap:o.cap||cap,base,area:o.area||'',nota:o.nota||'',cancel:o.cancel||null}}
+function clasesDe(di){
+  if(di===6)return[];
+  if(di===5)return[mk(5,'09:00','teams','Todos los coaches',40),mk(5,'11:00','open','Coach Luis',30)];
+  const L=[mk(di,'06:00','cf','Coach Ana',18),mk(di,'07:00','cf','Coach Beto',18)];
+  if(di%2===0)L.push(mk(di,'07:00','hib','Coach Dani',14));
+  L.push(mk(di,'08:00','cf','Coach Ana',18),mk(di,'09:00','cf','Coach Luis',18));
+  if(di%2===1)L.push(mk(di,'12:00','hal','Coach Luis',10));
+  L.push(mk(di,'18:00','cf','Coach Dani',18),mk(di,'19:00','cf','Coach Beto',18));
+  if(di%2===1)L.push(mk(di,'19:00','hib','Coach Dani',14));
+  L.push(mk(di,'20:00','cf','Coach Ana',18));
+  return L}
+const todas=()=>[0,1,2,3,4,5].flatMap(clasesDe);
+const clase=id=>todas().find(c=>c.id===id);
+const minDe=h=>{const[a,b]=h.split(':').map(Number);return a*60+b};
+function ocupados(c){return c.base-(S.liberados[c.id]||0)+(S.reservas.includes(c.id)?1:0)+S.prospectos.filter(p=>p.clase===c.id).length}
+function estado(c){if(c.di<AHORA.dia)return'fin';if(c.di===AHORA.dia){const m=minDe(c.h);if(m+60<=AHORA.min)return'fin';if(m<=AHORA.min)return'curso'}return'ok'}
+
+/* ---------- utilidades de interfaz ---------- */
+let toastT;
+function toast(msg){const t=$('#toast'),d=$('#sheetWrap');(d.open?d:document.body).appendChild(t);t.textContent=msg;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3800)}
+/* Hojas inferiores: <dialog> nativo (cierra con Escape, no deja escapar el foco). hojaN cambia cada vez que se abre o cierra una. */
+let hojaN=0,hojaPrev=null;
+function sheet(html){hojaN++;const d=$('#sheetWrap');if(!d.open)hojaPrev=document.activeElement;
+  $('#sheet').innerHTML='<div class="grab" aria-hidden="true"></div><button class="sheet-x" onclick="cerrar()" aria-label="Cerrar">✕</button>'+html;
+  const t=$('#sheet .h2');d.setAttribute('aria-label',t?t.textContent:'Ventana');
+  if(!d.open){try{d.showModal()}catch(e){d.setAttribute('open','')}}
+  $('#sheet').scrollTop=0;document.body.style.overflow='hidden'}
+function cerrar(){hojaN++;const d=$('#sheetWrap');if(d.open){try{d.close()}catch(e){d.removeAttribute('open')}}document.body.style.overflow=''}
+$('#sheetWrap').addEventListener('close',()=>{document.body.style.overflow='';document.body.appendChild($('#toast'));if(hojaPrev&&document.contains(hojaPrev)&&hojaPrev.focus)hojaPrev.focus();hojaPrev=null});
+$('#sheetWrap').addEventListener('click',e=>{if(e.target.id==='sheetWrap')cerrar()});
+/* Los selectores (chips, disciplinas, días, opciones) anuncian si están elegidos */
+function marcarElegidos(){$$('.chips>button.chip,.prog>button,.opt,.week>button').forEach(b=>b.setAttribute('aria-pressed',b.classList.contains('on')))}
+new MutationObserver(()=>queueMicrotask(marcarElegidos)).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+
+/* ---------- navegación ---------- */
+function irVista(v){$$('#roles button').forEach(b=>{b.classList.toggle('on',b.dataset.v===v);b.toggleAttribute('aria-current',b.dataset.v===v)});document.body.className='v-'+v+(window.__PRUEBA?' prueba':'');$$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+  try{history.replaceState(null,'','#'+v)}catch(e){}
+  ({atleta:renderAtleta,coach:renderCoach,duenio:renderDuenio,tv:renderTV,gratis:renderGratis,analisis:renderAnalisis})[v]();window.scrollTo(0,0)}
+$('#roles').addEventListener('click',e=>{const b=e.target.closest('button');if(b)irVista(b.dataset.v)});
+let pant='hoy';
+function irPant(p){pant=p;if(window.__PRUEBA){S.visto=S.visto||[];if(!S.visto.includes(p)){S.visto.push(p);save()}}$$('#tabbar button').forEach(b=>{b.classList.toggle('on',b.dataset.s===p);b.toggleAttribute('aria-current',b.dataset.s===p)});$$('.scr').forEach(s=>s.classList.toggle('on',s.id==='s-'+p));renderAtleta();window.scrollTo(0,0);$('#phone').scrollTop=0}
+$('#tabbar').addEventListener('click',e=>{const b=e.target.closest('button');if(b)irPant(b.dataset.s)});
+function reiniciar(){if(confirm('¿Reiniciar todos los datos de la demo?')){S=DEF();save();cerrar();irVista('atleta');irPant('hoy');toast('Demo reiniciada')}}
+$('#reset').onclick=reiniciar;
+$('#demoFab').onclick=()=>sheet(`<div class="h2">Demo de Complex</div><p class="mu sm" style="margin:4px 0 12px">Cambia de vista para enseñar cada parte de la app.</p>
+  <div class="col">${[['atleta','📱','Atleta'],['coach','📋','Coach'],['duenio','📊','Dueño'],['tv','📺','Pantalla del box'],['gratis','🎟️','Clase gratis'],['analisis','🔍','Análisis']].map(([v,e,n])=>`<button class="opt" onclick="cerrar();irVista('${v}')"><span class="e" aria-hidden="true">${e}</span><b>${n}</b></button>`).join('')}</div>
+  <button class="btn full ghost" style="margin-top:8px" onclick="reiniciar()">Reiniciar demo</button>`);
+
+/* =========================================================
+   ATLETA
+   ========================================================= */
+function renderAtleta(){({hoy:pHoy,clases:pClases,wod:pWod,progreso:pProgreso,comunidad:pComunidad})[pant]()}
+const escala=()=>S.escala||S.me.nivel;
+const PROG={cf:'CrossFit',hib:'Híbrido',hal:'Halterofilia'};
+const PROG_SUB={cf:'clases en grupo',hib:'estilo HYROX',hal:'técnica y fuerza'};
+const ICO=d=>`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const PROG_E={cf:ICO('<path d="M12 3c.8 3 5 5.2 5 10a5 5 0 0 1-10 0c0-2.6 1.3-4.2 2.6-5.2.2 2 1.2 3.2 2.4 3.2-.9-3 0-5.8 0-8z"/>'),
+  hib:ICO('<circle cx="14.5" cy="4.5" r="1.8"/><path d="M9 21l2.5-5.5L14 17v4M6.5 12.5 9.5 9h4l2 3.2 3 .8M11.5 15.5 10.2 10"/>'),
+  hal:ICO('<path d="M3 12h18M6 8v8M9 6.5v11M15 6.5v11M18 8v8"/>')};
+const AYUDA={AMRAP:w=>`Haz todas las rondas que puedas en ${w.min} min.`,'FOR TIME':w=>`Termina lo más rápido que puedas (límite ${w.min} min).`,EMOM:w=>`Al inicio de cada minuto haces el bloque y descansas lo que sobre (${w.min} min).`,'CARGA MÁX':()=>'Hoy se trabaja técnica y carga: registra tu levantamiento más pesado.'};
+const NIV={cf:{RX:'RX',Intermedio:'Intermedio',Principiante:'Principiante'},hib:{RX:'Pro',Intermedio:'Open',Principiante:'Inicial'},hal:{RX:'Avanzado',Intermedio:'Intermedio',Principiante:'Técnica'}};
+const TIPOS_M=[['AMRAP','AMRAP'],['FOR TIME','For time'],['EMOM','EMOM'],['CARGA MÁX','Sin metcon · carga máx.']];
+const progDe=t=>t==='hib'?'hib':t==='hal'?'hal':'cf';
+const prog=()=>S.prog||'cf';
+const W=(p=prog())=>S.wods[p];
+const nl=(k,p=prog())=>NIV[p][k];
+function proxima(){return S.reservas.map(clase).filter(c=>c&&!c.cancel&&estado(c)!=='fin').sort((a,b)=>a.di-b.di||minDe(a.h)-minDe(b.h))[0]}
+function prActual(l){const a=S.prs[l];return a[a.length-1][1]}
+function kgDe(mov,pct){if(!S.prs[mov])return null;return Math.round(prActual(mov)*pct/100/2.5)*2.5}
+const metLbl=w=>({AMRAP:`AMRAP ${w.min}′`,'FOR TIME':`For time · límite ${w.min}′`,EMOM:`EMOM ${w.min}′`,'CARGA MÁX':'Sin metcon'})[w.tipo];
+const fzTxt=f=>`${f.ser}×${f.rep} al ${f.pct}%`;
+const SAMPLES={
+  cf:[['Luis G.','RX',.92],['Sofía L.','RX',.8],['Diego A.','RX',.7],['Pau M.','Intermedio',.85],['Regina C.','Intermedio',.6],['Jorge V.','Intermedio',.45],['Caro S.','Principiante',.55],['Toño H.','Principiante',.3]],
+  hib:[['Valeria N.','RX',.9],['Rodrigo B.','RX',.75],['Emilio F.','Intermedio',.8],['Ximena O.','Intermedio',.55],['Lu Z.','Principiante',.6],['Fer T.','Principiante',.35]],
+  hal:[['Andrés P.','RX',.85],['Dani Q.','RX',.6],['Majo E.','Intermedio',.7],['Iván R.','Intermedio',.4],['Caro S.','Principiante',.5]]};
+function puntaje(w,s,q){
+  if(w.tipo==='FOR TIME')return{t:Math.round(w.min*60*(.5+.42*(1-q)))};
+  if(w.tipo==='CARGA MÁX')return{kg:{RX:72.5,Intermedio:52.5,Principiante:32.5}[s]+Math.round(q*20/2.5)*2.5,mov:(w.fz[0]||{}).mov||''};
+  const tot=Math.round((60+q*120)*(w.min/14));return{r:Math.floor(tot/30),p:tot%30}}
+function lbList(p=prog()){const w=S.wods[p];if(w.tipo==='EMOM')return[];
+  const L=SAMPLES[p].map(([n,s,q])=>({n,s,...puntaje(w,s,q)}));
+  const m=S.mios[p];if(m&&m.tipo===w.tipo)L.push({...m,n:S.me.nombre+' '+S.me.ap,me:1});
+  const o={RX:0,Intermedio:1,Principiante:2};
+  return L.sort((a,b)=>o[a.s]-o[b.s]||(w.tipo==='FOR TIME'?a.t-b.t:w.tipo==='CARGA MÁX'?b.kg-a.kg:(b.r-a.r||b.p-a.p)))}
+const scoreTxt=(x,p=prog())=>{const t=S.wods[p].tipo;return t==='FOR TIME'?fmt(x.t):t==='CARGA MÁX'?x.kg+' kg':x.r+'+'+x.p};
+function progChips(fn,cls=''){return`<div class="prog ${cls}" role="group" aria-label="Disciplina">${Object.keys(PROG).map(k=>`<button class="${k===prog()?'on':''}" onclick="S.prog='${k}';save();${fn}()"><span class="e">${PROG_E[k]}</span>${PROG[k]}<small>${PROG_SUB[k]}</small></button>`).join('')}</div>`}
+const yo=()=>S.me.nombre+' '+S.me.ap;
+/* Un PR por mes: si ya hay uno de octubre, se reemplaza */
+function registrarPR(mov,kg){const h=S.prs[mov];if(h.at(-1)[0]==='Oct')h[h.length-1]=['Oct',kg];else h.push(['Oct',kg])}
+
+function pHoy(){
+  const p=proxima();const falta=p&&p.di===0?minDe(p.h)-AHORA.min:null;
+  const r=S.ready,w=W(),huella=p?S.huella[p.id+yo()]:null;
+  const kgs=w.fz.map(f=>kgDe(f.mov,f.pct)).filter(x=>x!=null),kgMax=kgs.length?Math.max(...kgs):null;
+  $('#s-hoy').innerHTML=`
+  <div class="hello">
+    <div><div class="mu sm">Lunes 5 de octubre</div><div class="h1">¡Buenos días, ${esc(S.me.nombre)}!</div></div>
+    <button class="me-btn" onclick="hojaPerfil()" aria-label="Mi perfil y membresía">${esc(ini(yo()))}</button>
+  </div>
+  ${S.avisos.map((a,i)=>`<div class="card" style="border-color:rgba(245,169,59,.5);background:var(--ad)"><div class="row between"><b class="a sm">🔔 Aviso de Complex</b><button class="aviso-x" onclick="S.avisos.splice(${i},1);save();pHoy()" aria-label="Cerrar aviso">✕</button></div><div class="sm" style="margin-top:4px">${esc(a)}</div></div>`).join('')}
+  ${p?`<div class="card hi">
+    <div class="row between"><span class="lbl">Tu próxima clase</span><span class="tag t-${p.t}">${p.n}</span></div>
+    <div class="row between" style="align-items:flex-end;margin-top:8px">
+      <div><div class="next-time">${p.h}</div><div class="mu sm">${DIAS[p.di].l} · ${p.c}</div></div>
+      ${falta!=null?`<div style="text-align:right"><div class="disp g" style="font-size:30px;font-weight:800;line-height:1">${falta} min</div><div class="xs mu">para empezar</div></div>`:''}
+    </div>
+    <div class="row" style="margin-top:14px"><button class="btn pri grow" onclick="irPant('wod')">Ver mi WOD</button><button class="btn" onclick="pedirCancelar('${p.id}')">Cancelar</button></div>
+    ${huella?`<div class="chip grn" style="margin-top:10px">👆 Entraste ${huella}</div>`:`<button class="linkish" onclick="hojaEntrada()">👆 Al llegar, pon tu huella en recepción: tu asistencia se marca sola ›</button>`}
+    <div class="xs mu2" style="margin-top:2px">Puedes cancelar sin perder tu clase hasta 1 h antes.</div>
+  </div>`:`<div class="card"><div class="h3">No tienes clase reservada</div><p class="mu sm">Reserva tu lugar antes de que se llene.</p><button class="btn pri" style="margin-top:10px" onclick="irPant('clases')">Ver horarios</button></div>`}
+
+  <div class="card">
+    <div class="row between"><span class="lbl">¿Qué vas a entrenar hoy?</span><span class="chip grn">${nl(escala())}</span></div>
+    <div style="margin:10px 0 12px">${progChips('pHoy','mini')}</div>
+    ${p&&progDe(p.t)!==prog()?`<div class="xs a" style="margin:-4px 0 8px">Tu próxima clase es de ${PROG[progDe(p.t)]}.</div>`:''}
+    <div class="h2" style="margin:2px 0 8px">“${esc(w.nombre)}”</div>
+    ${w.fz.length?`<div class="row between sm" style="padding:6px 0;border-top:1px solid var(--line)"><span><b>Fuerza</b> · ${esc(w.fz[0].mov)}${w.fz.length>1?` · ${w.fz.length} líneas`:''}</span>${kgMax!=null&&escala()!=='Principiante'?`<span class="kgb" style="font-size:18px">hasta ${kgMax} kg</span>`:''}</div>`:''}
+    <div class="row between sm" style="padding:6px 0;border-top:1px solid var(--line)"><span><b>${w.tipo==='CARGA MÁX'?'Accesorios':'Metcon'}</b>${w.tipo==='CARGA MÁX'?'':' · '+metLbl(w)}</span><span class="xs mu">${w[escala()].length} movimientos</span></div>
+    <button class="btn sm full" style="margin-top:10px" onclick="irPant('wod')">Ver WOD completo ›</button>
+  </div>
+
+  <div class="stat3">
+    <div class="stat"><b class="g">${S.me.racha}</b><span>semanas seguidas</span></div>
+    <div class="stat"><b>${S.reto.hechas}</b><span>clases en octubre</span></div>
+    <div class="stat"><b class="a">${Math.max(0,100-S.me.total)}</b><span>para tus 100 clases</span></div>
+  </div>
+
+  <button class="card ready" style="text-align:left" onclick="hojaReady()">
+    ${r?`<span class="light" style="background:${r.c}22;color:${r.c}" aria-hidden="true">${r.e}</span><span class="grow" style="display:block"><span class="h3" style="display:block">${r.t}</span><span class="mu sm" style="display:block">${r.d}</span></span>`
+       :`<span class="light" style="background:var(--s2);color:var(--r)" aria-hidden="true">${ICO('<path d="M3 12h4l2-4 3 8 2-4h7"/>')}</span><span class="grow" style="display:block"><span class="h3" style="display:block">¿Cómo llegas hoy?</span><span class="mu sm" style="display:block">3 preguntas, 10 segundos: tu coach ajusta tu escala.</span></span><span class="mu" aria-hidden="true">›</span>`}
+  </button>
+
+  <div class="event">
+    <div class="lbl" style="color:var(--a)">Evento Complex · sábado 17 oct</div>
+    <div class="big" style="margin:8px 0">Simulador<br><em>Híbrido</em></div>
+    <div class="sm" style="color:#e9e6da;max-width:290px">Faltan <b>12 días</b>. Si te inscribes hasta el 9 de octubre, la playera Team Complex va incluida.</div>
+    <button class="btn amb" style="margin-top:14px" onclick="hojaEvento()">${S.evento?'Ver mi inscripción':'Inscribirme'}</button>
+  </div>
+
+  <div class="card row" style="gap:14px">
+    <div style="font-size:34px" aria-hidden="true">🥤</div>
+    <div class="grow"><div class="h3">Tu shake listo al terminar</div><div class="mu sm">Pide en la app y recógelo en la cafetería al salir de clase.</div></div>
+    <button class="btn sm" onclick="hojaCafe()">Pedir</button>
+  </div>
+  ${S.pedidos.length?`<div class="card sm"><span class="lbl">Pedido en cafetería</span><div style="margin-top:6px">${esc(S.pedidos.at(-1).items)} · <span class="a">${esc(S.pedidos.at(-1).cuando)}</span></div></div>`:''}
+  `}
+
+function hojaEntrada(){sheet(`<div style="text-align:center"><div class="lbl">Entrada a Complex</div><div class="h2" style="margin:6px 0">${esc(yo())}</div>
+  <div class="fp" aria-hidden="true">👆</div>
+  <div class="sm" style="color:#dcdbd2">Pon tu dedo en el lector de huellas de recepción.<br><span class="mu">Tu asistencia se marca sola en la app, suma a tu racha y tu coach ve que ya llegaste.</span></div>
+  <div class="row" style="justify-content:center;margin-top:14px"><span class="chip grn">● Membresía activa</span><span class="chip">Se renueva el ${S.me.vence}</span></div>
+  <div class="card" style="margin-top:14px;text-align:left"><span class="lbl">Tus últimas entradas</span>
+    <div class="row between sm" style="margin-top:8px"><span>Sáb 3 oct · Teams 9:00</span><span class="mu">👆 8:47</span></div>
+    <div class="row between sm"><span>Vie 2 oct · CrossFit 7:00</span><span class="mu">👆 6:51</span></div>
+    <div class="row between sm"><span>Jue 1 oct · CrossFit 7:00</span><span class="mu">👆 6:55</span></div></div>
+  <div class="xs mu2" style="margin-top:10px">Si el lector falla, recepción te registra con tu nombre.</div>
+  <button class="btn full" style="margin-top:16px" onclick="cerrar()">Listo</button></div>`)}
+
+function cancelar(id){const c=clase(id);S.reservas=S.reservas.filter(x=>x!==id);save();renderAtleta();toast(`Listo, cancelaste ${c?c.n+' de las '+c.h:'tu clase'}. Tu lugar queda libre para alguien más.`)}
+function pedirCancelar(id){const c=clase(id);sheet(`<div class="h2">¿Cancelar tu clase?</div><p class="mu sm" style="margin:6px 0 16px">${c.n} · ${DIAS[c.di].l} · ${c.h} con ${c.c}. Tu lugar queda libre para alguien más.</p>
+  <button class="btn red full" id="cxOk">Sí, cancelar</button><button class="btn full" style="margin-top:8px" onclick="cerrar()">Mantener mi lugar</button>`);
+  $('#cxOk').onclick=()=>{cerrar();cancelar(id)}}
+
+function hojaReady(){
+  sheet(`<div class="h2">¿Cómo llegas hoy?</div><p class="mu sm" style="margin:4px 0 14px">Tu coach ve el resultado para ajustar tu escala. No es diagnóstico médico.</p>
+  <div class="col">
+    <label><div class="row between sm"><b>¿Cómo dormiste?</b><span class="mu" id="o1">Bien</span></div><input type="range" min="1" max="5" value="4" id="r1"></label>
+    <label><div class="row between sm"><b>Energía</b><span class="mu" id="o2">Normal</span></div><input type="range" min="1" max="5" value="3" id="r2"></label>
+    <div><b class="sm">¿Alguna molestia?</b><div class="chips" style="margin-top:8px" id="r3"><button class="chip on" data-v="0">Ninguna</button><button class="chip" data-v="1">Leve</button><button class="chip" data-v="2">Fuerte</button></div></div>
+  </div>
+  <button class="btn pri full" style="margin-top:18px" id="rOk">Ver mi sugerencia</button>`);
+  const t1=['','Muy mal','Mal','Regular','Bien','Increíble'],t2=['','Sin pila','Baja','Normal','Alta','A tope'];
+  $('#r1').oninput=e=>$('#o1').textContent=t1[e.target.value];$('#r2').oninput=e=>$('#o2').textContent=t2[e.target.value];
+  let m=0;$('#r3').onclick=e=>{const b=e.target.closest('button');if(!b)return;m=+b.dataset.v;$$('#r3 .chip').forEach(x=>x.classList.toggle('on',x===b))};
+  $('#rOk').onclick=()=>{const s=+$('#r1').value+ +$('#r2').value-m*2;
+    S.ready=s>=7?{e:'💪',c:'#63d070',t:'Listo para ir al 100%',d:'Hoy puedes intentar la escala que te toca a buen ritmo.',k:'verde'}
+      :s>=5?{e:'👌',c:'#f5a93b',t:'Ve a un 80%',d:'Haz tu escala pero con cargas un poco más ligeras.',k:'amarillo'}
+      :{e:'🫶',c:'#ef6a5c',t:'Hoy escucha a tu cuerpo',d:'Te sugerimos bajar una escala y avisar a tu coach.',k:'rojo'};
+    save();cerrar();renderAtleta();toast('Listo: tu coach ya lo ve en su lista')}}
+
+function hojaPerfil(){
+  sheet(`<div class="row"><div class="me-btn" style="width:56px;height:56px;font-size:20px" aria-hidden="true">${esc(ini(yo()))}</div><div><div class="h2">${esc(yo())}</div><div class="mu sm">Nivel ${S.me.nivel} · ${S.me.total} clases en Complex</div></div></div>
+  <div class="card hi" style="margin-top:16px"><div class="row between"><span class="lbl">Mi membresía</span><span class="chip grn">Activa</span></div>
+    <div class="h3" style="margin-top:6px">${S.me.plan}</div><div class="mu sm">Se renueva el ${S.me.vence} (cobro automático a tu tarjeta)</div>
+    <div class="row" style="margin-top:12px"><button class="btn sm" onclick="toast('Demo: aquí se abre el pago con tarjeta o SPEI')">Pagar por adelantado</button><button class="btn sm" onclick="hojaCongelar()">Congelar membresía</button></div></div>
+  <div class="card" style="margin-top:10px"><span class="lbl">Pagos</span>
+    <div class="row between sm" style="margin-top:8px"><span>28 sep · Mensualidad</span><span>Pagado ✓</span></div>
+    <div class="row between sm"><span>28 ago · Mensualidad</span><span>Pagado ✓</span></div>
+    <div class="row between sm"><span>14 ago · Playera Team Complex</span><span>Pagado ✓</span></div></div>
+  <div style="margin-top:14px"><label for="les" class="sm b">Lesiones o cuidados (solo lo ve tu coach)</label><textarea id="les" rows="2" style="margin-top:6px">${esc(S.me.lesion)}</textarea></div>
+  <div style="margin-top:12px"><b class="sm">Mi nivel</b><div class="chips" style="margin-top:8px" id="niv" role="group" aria-label="Mi nivel">${['Principiante','Intermedio','RX'].map(n=>`<button class="chip ${n===S.me.nivel?'on':''}">${n}</button>`).join('')}</div></div>
+  <button class="btn pri full" style="margin-top:18px" id="pfOk">Guardar</button>`);
+  $('#niv').onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('#niv .chip').forEach(x=>x.classList.toggle('on',x===b))};
+  $('#pfOk').onclick=()=>{S.me.lesion=$('#les').value.trim();S.me.nivel=$('#niv .on').textContent;S.escala=null;save();cerrar();renderAtleta();toast('Perfil guardado')}}
+
+function hojaCongelar(){sheet(`<div class="h2">Congelar membresía</div><p class="mu sm" style="margin:6px 0 14px">Pausa hasta 30 días por viaje o lesión. Tus días no se pierden: se recorre tu fecha de renovación.</p>
+  <div class="chips" id="cgD" role="group" aria-label="Días">${[7,15,30].map((d,i)=>`<button class="chip ${i?'':'on'}">${d} días</button>`).join('')}</div>
+  <button class="btn pri full" style="margin-top:16px" onclick="cerrar();toast('Demo: membresía congelada desde hoy')">Congelar desde hoy</button>`);
+  $('#cgD').onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('#cgD .chip').forEach(x=>x.classList.toggle('on',x===b))}}
+
+let diaSel=0,filtro='todas';
+function pClases(){
+  const L=clasesDe(diaSel).filter(c=>filtro==='todas'||c.t===filtro);
+  $('#s-clases').innerHTML=`
+  <div class="h1">Clases</div>
+  <div class="week" role="group" aria-label="Día">${DIAS.map((d,i)=>`<button class="${i===diaSel?'on':''}" ${d.cerrado?'disabled':''} onclick="diaSel=${i};pClases()" aria-label="${d.l}${d.cerrado?', cerrado':''}">${d.n}<b>${d.d}</b></button>`).join('')}</div>
+  <div class="chips" role="group" aria-label="Tipo de clase">${[['todas','Todas'],['cf','CrossFit'],['hib','Híbrido'],['hal','Halterofilia'],['teams','Teams'],['open','Open box']].map(([k,n])=>`<button class="chip ${k===filtro?'on':''}" onclick="filtro='${k}';pClases()">${n}</button>`).join('')}</div>
+  <div class="mu sm">${DIAS[diaSel].l} · Gym libre de 6:00 a 21:00${diaSel===5?' (sábado 9:00 a 13:00)':''}</div>
+  ${L.length?L.map(c=>{const o=ocupados(c),full=o>=c.cap,mine=S.reservas.includes(c.id),esp=S.espera.includes(c.id),st=estado(c),pocos=!full&&st==='ok'&&!c.cancel&&c.cap-o<=3;
+    let b;
+    if(c.cancel)b='<span class="chip red">Cancelada</span>';
+    else if(st==='fin')b='<span class="xs mu2">Terminó</span>';
+    else if(st==='curso')b='<span class="chip amb">En curso</span>';
+    else if(mine)b=`<button class="chip on" onclick="pedirCancelar('${c.id}')" aria-label="Reservada. Toca para cancelar">Reservada ✓</button>`;
+    else if(esp)b='<span class="chip amb">En espera #1</span>';
+    else if(full)b=`<button class="chip" onclick="esperar('${c.id}')">Lista de espera</button>`;
+    else b=`<button class="btn sm pri" onclick="reservar('${c.id}')">Reservar</button>`;
+    const pop=window._pop===c.id;
+    return`<div class="cls ${mine?'mine':''} ${st==='fin'||c.cancel?'past':''} ${pop?'pop':''}"><div class="hr">${c.h}</div>
+      <div><div class="row" style="gap:6px"><span class="tag t-${c.t}">${c.n}</span></div><div class="sm mu" style="margin-top:3px">${c.c}${c.area?' · '+c.area:''}</div>${c.cancel?`<div class="xs r" style="margin-top:3px">Cancelada</div>`:c.nota?`<div class="xs a" style="margin-top:3px">📌 ${esc(c.nota)}</div>`:''}
+      <div class="bar ${full||pocos?'amb':''}"><i style="width:${Math.min(100,o/c.cap*100)}%"></i></div><div class="xs mu2" style="margin-top:3px">${full?'Llena':pocos?`<b class="a">¡Últimos ${c.cap-o}!</b>`:(c.cap-o)+' lugares'}</div></div>
+      <div>${b}</div></div>`}).join(''):'<div class="card mu">Domingo cerrado. ¡A descansar!</div>'}
+  <div class="xs mu2" style="text-align:center">Si se libera un lugar, te reservamos automáticamente y te avisamos.</div>`;window._pop=null}
+function reservar(id){if(S.reservas.includes(id))return;const c0=clase(id);if(!c0||c0.cancel)return;if(ocupados(c0)>=c0.cap){if(!S.espera.includes(id))esperar(id);return}
+  S.reservas.push(id);save();window._pop=id;pClases();const c=clase(id);toast(`Listo: ${c.n} ${DIAS[c.di].n} ${c.h}. Te recordamos 1 h antes.`)}
+function esperar(id){if(S.espera.includes(id))return;S.espera.push(id);save();pClases();toast('Estás en la lista de espera. Te avisamos si se libera un lugar.');setTimeout(()=>resolverEspera(id),4500)}
+/* En la demo, el lugar se libera a los pocos segundos. Se guarda en S.espera, así que también se resuelve si recargas. */
+function resolverEspera(id){if(!S.espera.includes(id))return;S.espera=S.espera.filter(x=>x!==id);const c=clase(id);
+  if(!c||c.cancel){save();renderAtleta();return}
+  S.liberados[id]=(S.liberados[id]||0)+1;if(!S.reservas.includes(id))S.reservas.push(id);save();
+  if($('#v-atleta').classList.contains('on'))renderAtleta();toast(`🔔 Se liberó un lugar: ya estás en ${c.n} de las ${c.h}`)}
+
+function pWod(){
+  const e=escala(),w=W(),P=prog(),lb0=lbList();
+  const lbF=window.lbF||'Todos';
+  const L=['A','B','C'];let k=0;
+  const fila=(x,i)=>`<div class="lb ${x.me?'me':''}"><div class="pos" ${i<3?'style="color:var(--a)"':''}>${i+1}</div><div><b>${x.me?'Tú · '+esc(S.me.nombre):esc(x.n)}</b><div class="xs mu">${nl(x.s)}${x.mov?' · '+esc(x.mov):''}</div></div><div class="sc">${scoreTxt(x)}</div></div>`;
+  const grupos=(lbF==='Todos'?['RX','Intermedio','Principiante']:[lbF]).map(g=>{const xs=lb0.filter(x=>x.s===g);return xs.length?`${lbF==='Todos'?`<div class="lbl" style="margin:14px 0 2px">${nl(g)}</div>`:''}${xs.map(fila).join('')}`:''}).join('');
+  $('#s-wod').innerHTML=`
+  <div class="mu sm">Lunes 5 oct · ¿qué vas a entrenar hoy?</div>
+  ${progChips('pWod')}
+  <div class="h1" style="margin-top:4px">“${esc(w.nombre)}”</div>
+  <div class="chips" role="group" aria-label="Tu escala">${['RX','Intermedio','Principiante'].map(n=>`<button class="chip ${n===e?'on':''}" onclick="S.escala='${n}';save();pWod()">${nl(n)}</button>`).join('')}</div>
+  <div class="xs mu" style="margin-top:-6px">${nl('RX')} = tal como está escrito · ${nl('Principiante')} = la versión más accesible</div>
+  <div class="card">
+    ${w.cal?`<div class="wod-sec"><div class="lbl">${L[k++]} · Calentamiento · ${w.calMin}′</div><div style="margin-top:6px">${esc(w.cal)}</div></div>`:''}
+    ${w.fz.length?`<div class="wod-sec"><div class="lbl">${L[k++]} · Fuerza</div>
+      ${w.fz.map((f,fi)=>{const kg=kgDe(f.mov,f.pct);return`<div class="fzr"><div><b>${esc(f.mov)}</b><div class="sm mu">${f.ser} series × ${esc(f.rep)} reps${e==='Principiante'?' · técnica, carga ligera':' · '+f.pct+'% de tu PR'}</div></div>
+        ${e==='Principiante'||kg==null?'':`<button class="kgb" onclick="hojaDiscos(${f.pct},${fi})" aria-label="${kg} kilos: ver qué discos poner">${kg} kg<small>ver discos</small></button>`}</div>`}).join('')}
+      ${e==='Principiante'?'<div class="xs mu" style="margin-top:6px">Tu coach te ayuda a elegir la carga.</div>':'<div class="xs mu2" style="margin-top:6px">Pesos calculados con tus PRs.</div>'}
+    </div>`:''}
+    <div class="wod-sec"><div class="lbl">${L[k++]} · ${w.tipo==='CARGA MÁX'?'Accesorios':'Metcon · '+metLbl(w)}</div>
+      <div class="xs mu" style="margin-top:4px">${AYUDA[w.tipo](w)}</div>
+      ${w[e].map((m,i)=>`<div class="mov"><span>${esc(m)}</span><button onclick="hojaMov(${i})" aria-label="Cómo se hace: ${esc(m)}">?</button></div>`).join('')}
+    </div>
+    ${w.nota?`<div class="wod-sec"><div class="lbl">Nota del coach</div><div class="sm" style="margin-top:4px;color:#dcdbd2">${esc(w.nota)}</div></div>`:''}
+  </div>
+  ${S.ready&&S.ready.k!=='verde'?`<div class="card sm" style="border-color:${S.ready.c}66">${S.ready.e} <b>${S.ready.t}.</b> <span class="mu">${S.ready.d}</span></div>`:''}
+  <div class="row"><button class="btn pri grow" onclick="hojaRes()">${S.mios[P]&&S.mios[P].tipo===w.tipo?'Editar resultado':'Registrar resultado'}</button>${S.mios[P]&&S.mios[P].tipo===w.tipo?'<button class="btn amb grow" onclick="histWod()"><span aria-hidden="true">📸</span> Compartir</button>':''}</div>
+  ${w.tipo==='EMOM'?`<div class="card sm"><span class="lbl">EMOM</span><div style="margin-top:6px">Hoy no hay ranking: el reto es completar cada minuto.</div>${S.mios[P]&&S.mios[P].tipo==='EMOM'?`<div class="g" style="margin-top:6px">✓ ${S.mios[P].ok} · ${nl(S.mios[P].s)}</div>`:''}</div>`:`
+  <div class="card">
+    <div class="row between"><span class="lbl">Ranking · ${PROG[P]}${w.tipo==='CARGA MÁX'?' · carga máx.':''}</span><span class="xs mu2">${lb0.length} atletas</span></div>
+    <div class="chips" style="margin:10px 0 4px" role="group" aria-label="Filtrar ranking">${['Todos','RX','Intermedio','Principiante'].map(n=>`<button class="chip ${n===lbF?'on':''}" onclick="window.lbF='${n}';pWod()">${n==='Todos'?n:nl(n)}</button>`).join('')}</div>
+    ${grupos}
+  </div>`}`}
+const CUES=[[/wall ?ball/i,'Sentadilla completa, cadera debajo de la rodilla. El balón sale con la fuerza de las piernas y pega arriba de la línea.'],[/box|step/i,'Cuenta cuando abres cadera arriba del cajón. Si tienes dudas de rodilla, el step-up es igual de bueno.'],[/pull-up|pull up|ring row|jumping pull/i,'Barbilla arriba de la barra. Si aún no sale, jumping pull-ups o ring rows: el objetivo es seguir moviéndote.'],[/sled push/i,'Brazos estirados, cuerpo inclinado y pasos cortos y rápidos. Empuja con las piernas, no con los brazos.'],[/sled pull/i,'Jala la cuerda mano sobre mano con la cadera baja. Puedes caminar hacia atrás entre jalones.'],[/burpee broad/i,'Burpee completo y salto largo con los dos pies. Aterriza suave y encadena el siguiente.'],[/pull de snatch|pull/i,'Mismo arranque que tu snatch: barra pegada, extensión completa y hombros arriba. No jales con brazos.'],[/hip thrust/i,'Espalda alta en el banco, empuja con los talones y aprieta glúteo arriba 1 segundo.'],[/hollow/i,'Zona lumbar pegada al piso, brazos y piernas largos. Si se despega la espalda, dobla rodillas.'],[/run|correr/i,'Sal por la puerta lateral, vuelta al poste naranja y regreso.'],[/remo|row/i,'Empuja con piernas, luego cadera y al final brazos. Regresa en orden inverso.']];
+function hojaMov(i){const m=W()[escala()][i]||'',c=CUES.find(x=>x[0].test(m));sheet(`<div class="lbl">Cómo se hace</div><div class="h2" style="margin:6px 0 10px">${esc(m)}</div>
+  <div style="aspect-ratio:16/9;border-radius:16px;background:linear-gradient(135deg,#25331f,#1a1b16);display:grid;place-items:center;font-size:44px;margin-bottom:12px" aria-hidden="true">▶︎</div>
+  <p class="mu sm" style="margin-bottom:6px"><span class="demo">DEMO</span>Aquí va un video corto grabado por los coaches de Complex.</p><p>${c?c[1]:'Tu coach lo explica al inicio de la clase. Pregunta cualquier duda: la técnica siempre va primero.'}</p><button class="btn full" style="margin-top:16px" onclick="cerrar()">Entendido</button>`)}
+
+const PLATE={25:['#d8433a',120],20:['#2f6fd6',120],15:['#e6c229',108],10:['#2e9b4a',96],5:['#ecebe4',74],2.5:['#d8433a',58],1.25:['#b8b9b0',48]};
+function porLado(total,barra){let x=(total-barra)/2;const out=[];for(const p of[25,20,15,10,5,2.5,1.25]){while(x>=p-1e-9){out.push(p);x-=p}}return out}
+function hojaDiscos(pct0,fi){const f0=W().fz[fi??0];const mv=f0&&S.prs[f0.mov]?f0.mov:'Back squat';let barra=15,pct=Math.min(100,Math.max(50,Math.round((pct0||(f0?f0.pct:75))/5)*5));const pr=prActual(mv);
+  const draw=()=>{const t=Math.round(pr*pct/100/2.5)*2.5,side=porLado(t,barra);
+    $('#dsc').innerHTML=`<div class="row between" style="align-items:flex-end"><div><div class="lbl">${mv} · ${pct}% de ${pr} kg</div><div class="disp" style="font-size:48px;font-weight:800;line-height:1">${t} kg</div></div><div class="mu sm" style="text-align:right">Barra ${barra} kg<br>por lado: ${side.join(' + ')||'sin discos'}</div></div>
+    <div class="plates"><div class="sleeve"></div>${side.map(p=>`<div class="p" style="background:${PLATE[p][0]};height:${PLATE[p][1]}px"></div>`).join('')}<div class="collar"></div><div class="sleeve" style="width:30px"></div></div>
+    <div class="lbl" style="margin:6px 0 8px">Tus porcentajes</div><div class="pct">${[50,60,65,70,75,80,85,90].map(q=>`<div><b>${Math.round(pr*q/100/2.5)*2.5}</b><span>${q}%</span></div>`).join('')}</div>`};
+  sheet(`<div class="h2" style="margin-bottom:10px">Calculadora de discos</div>
+  <div class="chips" id="pb" role="group" aria-label="Barra"><button class="chip on" data-b="15">Barra 15 kg</button><button class="chip" data-b="20">Barra 20 kg</button></div>
+  <input type="range" min="50" max="100" step="5" value="${pct}" id="pp" style="margin-top:6px" aria-label="Porcentaje de tu PR"><div id="dsc"></div><button class="btn full" style="margin-top:16px" onclick="cerrar()">Listo</button>`);
+  $('#pb').onclick=e=>{const b=e.target.closest('button');if(!b)return;barra=+b.dataset.b;$$('#pb .chip').forEach(x=>x.classList.toggle('on',x===b));draw()};
+  $('#pp').oninput=e=>{pct=+e.target.value;draw()};draw()}
+
+function hojaRes(r0){const P=prog(),w=W(),m=S.mios[P]&&S.mios[P].tipo===w.tipo?S.mios[P]:{s:escala(),r:r0??'',p:''};
+  const movs=w.fz.map(f=>f.mov).filter((x,i,a)=>a.indexOf(x)===i&&S.prs[x]);
+  const campos=w.tipo==='AMRAP'?`<div class="row" style="margin-top:14px"><label class="grow"><span class="xs mu">Rondas</span><input type="number" inputmode="numeric" id="rr" value="${m.r??''}"></label><span class="disp" style="font-size:30px;margin-top:16px">+</span><label class="grow"><span class="xs mu">Reps</span><input type="number" inputmode="numeric" id="rp" value="${m.p??''}"></label></div>`
+    :w.tipo==='FOR TIME'?`<div class="row" style="margin-top:14px"><label class="grow"><span class="xs mu">Minutos</span><input type="number" inputmode="numeric" id="rm" value="${m.t?Math.floor(m.t/60):''}"></label><span class="disp" style="font-size:30px;margin-top:16px">:</span><label class="grow"><span class="xs mu">Segundos</span><input type="number" inputmode="numeric" id="rsg" value="${m.t?m.t%60:''}"></label></div>`
+    :w.tipo==='CARGA MÁX'?`<label class="fld"><span>Movimiento</span><select id="rmv">${movs.map(x=>`<option ${x===m.mov?'selected':''}>${x}</option>`).join('')}</select></label><label class="fld"><span>Tu levantamiento más pesado (kg)</span><input type="number" inputmode="decimal" id="rkg" value="${m.kg??''}"></label>`
+    :`<div class="chips" style="margin-top:14px" id="rk"><button class="chip on">Completé todos los minutos</button><button class="chip">Me faltaron algunos</button></div>`;
+  sheet(`<div class="h2">Tu resultado · ${PROG[P]}</div><p class="mu sm" style="margin:4px 0 14px">${w.tipo==='AMRAP'?metLbl(w)+' · rondas completas + repeticiones extra':w.tipo==='FOR TIME'?metLbl(w)+' · tu tiempo final':w.tipo==='CARGA MÁX'?'Tu mejor levantamiento de hoy':metLbl(w)}</p>
+  <div class="chips" id="rs" role="group" aria-label="Escala que hiciste">${['RX','Intermedio','Principiante'].map(n=>`<button class="chip ${n===m.s?'on':''}" data-k="${n}">${nl(n)}</button>`).join('')}</div>
+  ${campos}
+  <button class="btn pri full" style="margin-top:18px" id="rOk2">${w.tipo==='EMOM'?'Guardar':'Guardar en el ranking'}</button>`);
+  $$('#sheet .chips').forEach(g=>g.onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('.chip',g).forEach(x=>x.classList.toggle('on',x===b))});
+  $('#rOk2').onclick=()=>{const s=$('#rs .on').dataset.k;let extra='',nuevoPR=null;
+    if(w.tipo==='AMRAP'){const r=+$('#rr').value,pp=+$('#rp').value||0;if($('#rr').value===''||!Number.isInteger(r)||r<0||!Number.isInteger(pp)||pp<0){toast('Revisa rondas y reps: solo números enteros, por ejemplo 5 + 12.');return}S.mios[P]={tipo:'AMRAP',s,r,p:pp}}
+    else if(w.tipo==='FOR TIME'){const mi=+$('#rm').value||0,se=+$('#rsg').value||0;if(mi<0||se<0||se>59||!Number.isInteger(mi)||!Number.isInteger(se)){toast('Revisa tu tiempo: minutos en número entero y segundos de 0 a 59.');return}const t=mi*60+se;if(!t){toast('Escribe tu tiempo');return}S.mios[P]={tipo:'FOR TIME',s,t}}
+    else if(w.tipo==='CARGA MÁX'){const kg=+$('#rkg').value,mv=$('#rmv').value;if(!(kg>0)){toast('Escribe cuántos kg levantaste.');return}if(S.prs[mv]&&kg>prActual(mv)*1.3&&!confirm(`¿${kg} kg? Es mucho más que tu PR (${prActual(mv)} kg). Revisa que no sea un error de dedo.`))return;S.mios[P]={tipo:'CARGA MÁX',s,kg,mov:mv};
+      if(S.prs[mv]&&kg>prActual(mv)){extra=` · 🎉 ¡Nuevo PR en ${mv}!`;registrarPR(mv,kg);nuevoPR=mv}}
+    else S.mios[P]={tipo:'EMOM',s,ok:$('#rk .on').textContent};
+    save();cerrar();irPant('wod');toast((w.tipo==='EMOM'?'💪 Registrado':'🔥 Resultado guardado')+extra);if(nuevoPR)histPR(nuevoPR)}}
+
+let prSel='Back squat';
+function chart(pts){const w=340,h=160,v=pts.map(p=>p[1]),mn=Math.min(...v)-6,mx=Math.max(...v)+4;
+  const X=i=>18+i*(w-40)/Math.max(1,pts.length-1),Y=k=>h-26-(k-mn)/(mx-mn)*(h-50);
+  const d=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(' ');
+  return`<svg viewBox="0 0 ${w} ${h}" style="width:100%;display:block" role="img" aria-label="Progreso: ${pts.map(p=>p[0]+' '+p[1]+' kg').join(', ')}">
+  <defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ea64b" stop-opacity=".35"/><stop offset="1" stop-color="#3ea64b" stop-opacity="0"/></linearGradient></defs>
+  <path d="${d} L${X(pts.length-1)} ${h-26} L${X(0)} ${h-26}Z" fill="url(#gf)"/>
+  <path d="${d}" fill="none" stroke="#63d070" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  ${pts.map((p,i)=>`<circle cx="${X(i)}" cy="${Y(p[1])}" r="${i===pts.length-1?6:4}" fill="${i===pts.length-1?'#f5a93b':'#63d070'}" stroke="#1c1d19" stroke-width="2"/>
+  <text x="${X(i)}" y="${h-8}" fill="#979a8c" font-size="11" text-anchor="middle" font-family="Inter">${p[0]}</text>
+  <text x="${X(i)}" y="${Y(p[1])-11}" fill="${i===pts.length-1?'#f5a93b':'#aeb0a2'}" font-size="${i===pts.length-1?13:11}" font-weight="700" text-anchor="middle" font-family="Inter">${p[1]}</text>`).join('')}</svg>`}
+function pProgreso(){
+  const h=S.prs[prSel],gan=h.at(-1)[1]-h[0][1];
+  let heat='';for(let i=0;i<72;i++){const wk=i%12,v=rnd('as'+i);heat+=`<i class="${wk===11&&i>=48?'':v>.42?'y':''}"></i>`}
+  $('#s-progreso').innerHTML=`
+  <div class="h1">Progreso</div>
+  <div class="chips" role="group" aria-label="Movimiento">${Object.keys(S.prs).map(k=>`<button class="chip ${k===prSel?'on':''}" onclick="prSel='${k}';pProgreso()">${k}</button>`).join('')}</div>
+  <div class="card">
+    <div class="row between"><div><div class="lbl">PR actual</div><div class="disp" style="font-size:44px;font-weight:800;line-height:1">${h.at(-1)[1]} kg</div></div><div style="text-align:right"><div class="chip grn">+${gan} kg</div><div class="xs mu" style="margin-top:4px">desde ${h[0][0]}</div></div></div>
+    ${chart(h)}
+    <div class="row" style="margin-top:6px"><button class="btn grow" onclick="hojaPR()">+ Nuevo PR</button><button class="btn amb grow" onclick="histPR(prSel)"><span aria-hidden="true">📸</span> Compartir</button></div>
+  </div>
+  <div class="card"><div class="lbl" style="margin-bottom:8px">Benchmarks</div>
+    ${S.bench.map(b=>`<div class="row between" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><b>${b[0]}</b><div class="xs mu">${b[2]}</div></div><span class="disp" style="font-size:22px;font-weight:700">${b[1]}</span></div>`).join('')}
+  </div>
+  <div class="card"><div class="row between"><span class="lbl">Asistencia · 12 semanas</span><span class="xs mu">cada cuadro es un día · L a S hacia abajo</span></div><div class="heat" style="margin-top:10px" role="img" aria-label="Asistencia de 12 semanas: 3.4 clases por semana">${heat}</div>
+  <div class="xs mu" style="margin-top:8px">Vas 3.4 clases por semana. Tu mejor horario: 7:00.</div></div>
+  <div class="lbl">Logros</div>
+  <div class="badges">
+    <div class="badge"><div class="ic">🧗</div><b>Primer pull-up</b><span>marzo</span></div>
+    <div class="badge"><div class="ic">🔥</div><b>Racha de 6</b><span>semanas</span></div>
+    <div class="badge"><div class="ic">🏋️</div><b>Bodyweight squat</b><span>agosto</span></div>
+    <div class="badge lock"><div class="ic">💯</div><b>100 clases</b><span>${S.me.total}/100</span></div>
+    <div class="badge lock"><div class="ic">🇺🇸</div><b>Primer Murph</b><span>pendiente</span></div>
+    <div class="badge lock"><div class="ic">🏅</div><b>Podio</b><span>en competencia</span></div>
+  </div>`}
+function hojaPR(){sheet(`<div class="h2">Nuevo PR</div><p class="mu sm" style="margin:4px 0 14px">Se actualizan tus pesos en todos los WODs.</p>
+  <select id="pl" aria-label="Movimiento">${Object.keys(S.prs).map(k=>`<option ${k===prSel?'selected':''}>${k}</option>`).join('')}</select>
+  <input type="number" inputmode="decimal" id="pk" placeholder="kg" aria-label="Peso en kg" style="margin-top:10px">
+  <button class="btn pri full" style="margin-top:16px" id="pOk">Guardar PR</button>`);
+  $('#pOk').onclick=()=>{const l=$('#pl').value,k=+$('#pk').value;if(!(k>0)){toast('Escribe cuántos kg levantaste.');return}
+    const prev=prActual(l);if(k<=prev){toast(`Tu PR en ${l} es ${prev} kg. Para registrar uno nuevo, escribe más de ${prev} kg.`);return}
+    if(k>prev*1.3&&!confirm(`¿${k} kg? Es mucho más que tu PR (${prev} kg). Revisa que no sea un error de dedo.`))return;
+    registrarPR(l,k);prSel=l;save();cerrar();pProgreso();histPR(l)}}
+
+/* ---------- historias para Instagram ---------- */
+async function storyCanvas(d){
+  try{await Promise.all([document.fonts.load('800 120px "Barlow Condensed"'),document.fonts.load('700 60px "Barlow Condensed"'),document.fonts.load('600 40px Inter')])}catch(e){}
+  const Wd=1080,H=1920,c=document.createElement('canvas');c.width=Wd;c.height=H;const x=c.getContext('2d');
+  x.fillStyle='#141512';x.fillRect(0,0,Wd,H);
+  let g=x.createRadialGradient(Wd,0,0,Wd,0,1150);g.addColorStop(0,'rgba(245,169,59,.42)');g.addColorStop(1,'rgba(245,169,59,0)');x.fillStyle=g;x.fillRect(0,0,Wd,H);
+  g=x.createRadialGradient(0,H,0,0,H,1250);g.addColorStop(0,'rgba(62,166,75,.5)');g.addColorStop(1,'rgba(62,166,75,0)');x.fillStyle=g;x.fillRect(0,0,Wd,H);
+  x.save();x.globalAlpha=.07;x.strokeStyle='#3ea64b';x.lineWidth=190;x.beginPath();x.arc(Wd*.82,H*.6,560,Math.PI/4,Math.PI*7/4,false);x.stroke();x.restore();
+  const logo=(cx,cy,r)=>{x.fillStyle='#2a2b23';x.beginPath();x.arc(cx,cy,r,0,7);x.fill();x.strokeStyle='#3ea64b';x.lineWidth=r*.3;x.beginPath();x.arc(cx,cy,r*.58,Math.PI/4,Math.PI*7/4,false);x.stroke();x.fillStyle='#f5a93b';x.beginPath();x.arc(cx+r*.02,cy,r*.27,0,7);x.fill()};
+  logo(150,190,70);
+  x.fillStyle='#f4f2ea';x.font='800 72px "Barlow Condensed"';x.textBaseline='middle';x.fillText('COMPLEX',245,192);
+  x.fillStyle='#aeb0a2';x.font='600 34px Inter';x.textAlign='right';x.fillText('LUN 5 OCT 2026',Wd-80,192);x.textAlign='left';
+  x.textBaseline='alphabetic';
+  x.fillStyle='#f5a93b';x.font='700 64px "Barlow Condensed"';x.fillText(d.kicker.toUpperCase(),80,660);
+  let fs=330;x.font=`800 ${fs}px "Barlow Condensed"`;while(x.measureText(d.big).width>Wd-160&&fs>120){fs-=10;x.font=`800 ${fs}px "Barlow Condensed"`}
+  x.fillStyle='#f4f2ea';x.fillText(d.big,72,660+fs*.92);
+  let y=660+fs*.92+110;
+  x.fillStyle='#63d070';x.font='700 84px "Barlow Condensed"';x.fillText(d.line.toUpperCase(),80,y);
+  x.fillStyle='#dcdbd2';x.font='600 44px Inter';x.fillText(d.sub,80,y+80);
+  x.fillStyle='rgba(255,255,255,.08)';const nm=d.nombre;x.font='700 46px Inter';const nw=x.measureText(nm).width+90;
+  x.beginPath();x.roundRect?x.roundRect(80,y+150,nw,96,48):x.rect(80,y+150,nw,96);x.fill();x.fillStyle='#f4f2ea';x.fillText(nm,125,y+214);
+  x.fillStyle='#f4f2ea';x.font='700 60px "Barlow Condensed"';x.fillText('@cmplxfitnesscenter',80,H-250);
+  x.fillStyle='#aeb0a2';x.font='600 38px Inter';x.fillText('#WeAreComplex · Querétaro',80,H-185);
+  return c}
+async function hojaHistoria(d){
+  sheet(`<div class="lbl">Comparte en Instagram</div><div class="h2" style="margin:4px 0 4px">Tu historia está lista</div><p class="mu sm">Ya trae la marca de Complex y la etiqueta a @cmplxfitnesscenter.</p>
+    <div id="stPrev"><div class="story" style="display:grid;place-items:center" ><span class="mu sm">Preparando…</span></div></div>
+    <button class="btn amb full" style="margin-top:16px" id="stShare" disabled><span aria-hidden="true">📸</span> Compartir en mi historia</button>
+    <p class="xs mu" style="text-align:center;margin-top:8px">En Instagram elige <b>Tu historia</b>. Cada historia que suben con la etiqueta es publicidad gratis para Complex.</p>
+    <button class="btn full ghost" style="margin-top:6px" onclick="cerrar()">Ahora no</button>`);
+  const mi=hojaN;
+  const c=await storyCanvas({...d,nombre:yo()});
+  const prevBox=$('#stPrev');if(mi!==hojaN||!prevBox)return; // se cerró o se cambió la hoja antes de terminar
+  const url=c.toDataURL('image/png');prevBox.innerHTML=`<img class="story" src="${url}" alt="Historia para Instagram">`;
+  c.toBlob(b=>{if(mi!==hojaN)return;const f=new File([b],'complex-historia.png',{type:'image/png'}),btn=$('#stShare');if(!btn)return;btn.disabled=false;
+    btn.onclick=()=>{S.compartidas++;save();
+      if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(()=>{})}
+      else{const a=document.createElement('a');a.href=url;a.download='complex-historia.png';document.body.appendChild(a);a.click();a.remove();toast('Imagen guardada: súbela a tu historia')}}},'image/png')}
+const histPR=(mov)=>{const h=S.prs[mov];hojaHistoria({kicker:'Nuevo PR 🎉',big:h.at(-1)[1]+' KG',line:mov,sub:`+${h.at(-1)[1]-h[0][1]} kg desde ${h[0][0].toLowerCase()} entrenando en Complex`})};
+function histWod(){const P=prog(),w=W(),m=S.mios[P];if(!m)return;
+  hojaHistoria({kicker:'WOD de hoy · '+PROG[P],big:m.tipo==='EMOM'?'✓ HECHO':scoreTxt(m,P).toUpperCase(),line:'“'+w.nombre+'”',sub:`${nl(m.s,P)} · ${m.tipo==='CARGA MÁX'?m.mov:metLbl(w)}`})}
+function histEvento(){const e=S.evento;hojaHistoria({kicker:'Ya me inscribí',big:'HÍBRIDO',line:'Simulador · sáb 17 oct',sub:`${e.cat} · ola de las ${e.ola} · ¿quién se anima?`})}
+
+const REELS=[['Cualquier sábado en Complex','linear-gradient(160deg,#3ea64b,#14301a)'],['Mujeres fuertes','linear-gradient(160deg,#f5a93b,#5a3410)'],['La técnica va primero','linear-gradient(160deg,#2f3129,#0e0f0c)'],['Podios del fin','linear-gradient(160deg,#c9a227,#3a2d06)'],['Simulador Híbrido 17 oct','linear-gradient(160deg,#ef6a5c,#3d1410)']];
+
+function pComunidad(){
+  $('#s-comunidad').innerHTML=`
+  <div class="h1">Comunidad</div>
+  <div class="card hi"><div class="row between"><span class="lbl">Reto de octubre</span><span class="chip amb">Quedan 27 días</span></div>
+    <div class="h2" style="margin:6px 0">20 clases en octubre</div>
+    <div class="bar"><i style="width:${S.reto.hechas/S.reto.meta*100}%"></i></div>
+    <div class="row between xs mu" style="margin-top:6px"><span>${S.reto.hechas} de ${S.reto.meta}</span><span>Premio: shake gratis + insignia</span></div>
+    <div class="sep"></div><div class="xs mu">Van en el reto: <b class="g">148 atletas</b> · 31 ya pasan de 5 clases</div></div>
+
+  <div class="card"><div class="row between"><div><span class="lbl">Sábado de Teams</span><div class="h3" style="margin-top:4px">Sábado 10 · 9:00 a.m.</div></div><span style="font-size:30px" aria-hidden="true">🤝</span></div>
+    <p class="mu sm" style="margin:6px 0 12px">Equipos de 3 armados al azar, mezclando niveles. Sudar sabroso, pero en equipo.</p>
+    ${S.teams?`<div class="card" style="background:var(--s2)"><div class="lbl" style="color:var(--g2)">Tu equipo: Verde Lima</div><div class="row" style="margin-top:8px">${['Tú','Luis G.','Pau M.'].map(n=>`<div class="row" style="gap:6px"><div class="av" style="background:var(--g);color:#0b170d">${ini(n==='Tú'?'Mariana R':n)}</div><span class="sm">${n}</span></div>`).join('')}</div></div>`
+      :`<button class="btn pri full" onclick="S.teams=true;save();pComunidad();toast('¡Dentro! Te armamos equipo el viernes')">Me apunto</button>`}
+  </div>
+
+  <div class="event"><div class="lbl" style="color:var(--a)">Sábado 17 oct</div><div class="big" style="margin:6px 0;font-size:32px">Simulador <em>Híbrido</em></div>
+    <div class="sm" style="color:#e9e6da">8 km de carrera + 8 estaciones. Individual, parejas o relevos.</div>
+    <button class="btn amb" style="margin-top:12px" onclick="hojaEvento()">${S.evento?'Ver mi inscripción':'Inscribirme'}</button></div>
+
+  <div class="card"><div class="row between"><span class="lbl">Complex en Instagram</span><a class="xs g" href="https://www.instagram.com/cmplxfitnesscenter/" target="_blank" rel="noopener">Ver perfil ›</a></div>
+    <div class="reels">${REELS.map(r=>`<button class="reel" style="background:${r[1]}" onclick="window.open('https://www.instagram.com/cmplxfitnesscenter/','_blank')">${r[0]}<small>@cmplxfitnesscenter</small></button>`).join('')}</div>
+    <div class="xs mu2" style="margin-top:8px"><span class="demo">DEMO</span>En la app real aparecen solos sus últimos reels.</div></div>
+
+  <div class="card"><span class="lbl">Muro Complex</span>
+    ${S.feed.map(p=>`<div class="post"><div class="av" style="${p.who==='Complex'?'background:#2a2b23;color:var(--a)':''}">${p.who==='Complex'?'C':ini(p.who)}</div><div class="grow"><div class="row between"><b class="sm">${p.who}</b><span class="xs mu2">${p.t}</span></div><div class="sm" style="margin-top:2px">${p.txt}</div>
+      <button class="fist ${S.choca[p.id]?'on':''}" onclick="chocala(${p.id})" aria-pressed="${!!S.choca[p.id]}" aria-label="Chócala, ${p.n+(S.choca[p.id]?1:0)}">👊 ${p.n+(S.choca[p.id]?1:0)}</button></div></div>`).join('')}
+  </div>
+
+  <div class="card row" style="gap:14px"><div style="font-size:34px" aria-hidden="true">🎟️</div><div class="grow"><div class="h3">Invita a alguien</div><div class="mu sm">Su primera clase es gratis. Si se hace socio, ganas una semana extra.</div></div>
+    <button class="btn sm" onclick="toast('Link copiado. Mándalo por WhatsApp: si se hace socio, tu semana extra se suma sola.')">Invitar</button></div>`}
+function chocala(id){S.choca[id]=!S.choca[id];save();pComunidad()}
+
+function hojaEvento(){
+  if(S.evento){const e=S.evento;sheet(`<div class="lbl" style="color:var(--a)">Simulador Híbrido · 17 oct</div><div class="h2" style="margin:6px 0 12px">¡Ya estás dentro, ${esc(S.me.nombre)}!</div>
+    <div class="card"><div class="row between sm"><span class="mu">Categoría</span><b>${e.cat}</b></div><div class="row between sm"><span class="mu">Ola (hora de salida)</span><b>${e.ola}</b></div><div class="row between sm"><span class="mu">Playera Team Complex</span><b>Talla ${e.talla} · incluida</b></div></div>
+    <div class="lbl" style="margin:16px 0 8px">Tu plan de 12 días</div>
+    <div class="col sm">
+      <div class="card" style="padding:12px"><b>Mar 6 · Híbrido 19:00</b><div class="mu">Simulación de 4 estaciones con tiempo</div></div>
+      <div class="card" style="padding:12px"><b>Jue 8 · Carrera</b><div class="mu">5 × 1 km a ritmo de competencia</div></div>
+      <div class="card" style="padding:12px"><b>Mar 13 · Simulacro completo</b><div class="mu">Te medimos y te damos tu tiempo meta</div></div>
+      <div class="card" style="padding:12px"><b>Jue 15 · Suave</b><div class="mu">Movilidad y técnica de wall balls</div></div>
+    </div>
+    <button class="btn amb full" style="margin-top:16px" onclick="histEvento()"><span aria-hidden="true">📸</span> Compartir en mi historia</button>
+    <button class="btn full" style="margin-top:8px" onclick="cerrar()">Cerrar</button>`);return}
+  let sel={cat:null,ola:null,talla:null};
+  sheet(`<div class="lbl" style="color:var(--a)">Sábado 17 de octubre</div><div class="h2" style="margin:6px 0 4px">Simulador Híbrido</div>
+  <p class="mu sm">1 km de carrera entre cada estación: SkiErg, sled push, sled pull, burpee broad jumps, remo, farmer's carry, sandbag lunges y wall balls.</p>
+  <div class="card" style="margin:12px 0;background:var(--ad);border-color:rgba(245,169,59,.4)"><b class="a">Playera Team Complex incluida</b><div class="sm" style="color:#e9e6da">si te inscribes hasta el 9 de octubre</div></div>
+  <div class="lbl" style="margin:12px 0 8px">Categoría</div><div class="chips wrap" style="flex-wrap:wrap" data-k="cat" role="group" aria-label="Categoría">${['Individual Open','Individual Pro','Parejas','Relevos de 4'].map(x=>`<button class="chip">${x}</button>`).join('')}</div>
+  <div class="lbl" style="margin:14px 0 8px">Ola (hora de salida)</div><div class="chips" data-k="ola" role="group" aria-label="Ola">${['8:00','9:30','11:00','12:30'].map(x=>`<button class="chip">${x}</button>`).join('')}</div>
+  <div class="lbl" style="margin:14px 0 8px">Talla de playera</div><div class="chips" data-k="talla" role="group" aria-label="Talla">${['XS','S','M','L','XL'].map(x=>`<button class="chip">${x}</button>`).join('')}</div>
+  <div class="row between" style="margin-top:18px"><span class="mu sm"><span class="demo">DEMO</span>Inscripción · precio de ejemplo</span><b class="disp" style="font-size:26px">$590</b></div>
+  <button class="btn amb full" style="margin-top:10px" id="evOk">Pagar e inscribirme</button>`);
+  $$('#sheet [data-k]').forEach(g=>g.onclick=e=>{const b=e.target.closest('button');if(!b)return;sel[g.dataset.k]=b.textContent;$$('.chip',g).forEach(x=>x.classList.toggle('on',x===b))});
+  $('#evOk').onclick=()=>{const falta=!sel.cat?'tu categoría':!sel.ola?'tu ola (hora de salida)':!sel.talla?'tu talla de playera':null;if(falta){toast('Falta elegir '+falta+'.');return}S.evento=sel;save();renderAtleta();hojaEvento();toast('🎉 ¡Listo! Ya estás en el Simulador Híbrido')}}
+
+const CAFE=[['Shake de proteína',85,'🥤'],['Cold brew con proteína',75,'🧋'],['Café americano',40,'☕️'],['Bowl de avena y fruta',95,'🥣'],['Barrita de proteína',45,'🍫'],['Agua con electrolitos',35,'💧']];
+function hojaCafe(){const q={};let cuando='Al terminar mi clase de 7:00';
+  const tot=()=>Object.entries(q).reduce((s,[i,n])=>s+CAFE[i][1]*n,0);
+  const draw=()=>{$('#cf').innerHTML=CAFE.map((c,i)=>`<div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)"><span style="font-size:24px" aria-hidden="true">${c[2]}</span><div class="grow"><b class="sm">${c[0]}</b><div class="xs mu">${mxn(c[1])}</div></div>
+    ${q[i]?`<button class="chip" data-m="${i}" aria-label="Quitar ${c[0]}">−</button><b aria-label="${q[i]} en tu pedido">${q[i]}</b>`:''}<button class="chip ${q[i]?'on':''}" data-p="${i}" aria-label="Agregar ${c[0]}">+</button></div>`).join('');$('#cfT').textContent=mxn(tot())};
+  sheet(`<div class="h2">Cafetería Complex</div><p class="mu sm" style="margin:4px 0 8px"><span class="demo">DEMO</span>Precios de ejemplo.</p><div id="cf"></div>
+  <div class="lbl" style="margin:14px 0 8px">¿Cuándo lo recoges?</div><div class="chips" id="cw" role="group" aria-label="Cuándo lo recoges">${['Al terminar mi clase de 7:00','Ahora mismo','Mañana 7:00'].map((x,i)=>`<button class="chip ${i?'':'on'}">${x}</button>`).join('')}</div>
+  <div class="lbl" style="margin:14px 0 8px">Pago</div><div class="chips" id="cp" role="group" aria-label="Pago"><button class="chip on">Cobrar a mi tarjeta registrada</button><button class="chip">Pagar en la barra</button></div>
+  <button class="btn pri full" style="margin-top:18px" id="cfOk">Pedir · <span id="cfT">$0</span></button>`);
+  $('#cf').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p!=null)q[b.dataset.p]=(q[b.dataset.p]||0)+1;if(b.dataset.m!=null){q[b.dataset.m]--;if(!q[b.dataset.m])delete q[b.dataset.m]}draw()};
+  $('#cw').onclick=e=>{const b=e.target.closest('button');if(!b)return;cuando=b.textContent;$$('#cw .chip').forEach(x=>x.classList.toggle('on',x===b))};
+  $('#cp').onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('#cp .chip').forEach(x=>x.classList.toggle('on',x===b))};
+  $('#cfOk').onclick=()=>{if(!tot()){toast('Agrega algo a tu pedido');return}
+    S.pedidos.push({quien:yo(),items:Object.entries(q).map(([i,n])=>n+'× '+CAFE[i][0]).join(', '),cuando,total:tot()});save();cerrar();renderAtleta();toast('☕️ Pedido enviado a la cafetería')};draw()}
+
+
+/* =========================================================
+   COACH
+   ========================================================= */
+const NOMBRES=['Luis G.','Pau M.','Diego A.','Sofía L.','Regina C.','Jorge V.','Valeria N.','Iván R.','Caro S.','Toño H.','Majo E.','Rodrigo B.','Ximena O.','Emilio F.','Dani Q.','Lu Z.','Andrés P.','Fer T.'];
+const FLAGS={'Jorge V.':[['f-inj','Rodilla derecha']],'Regina C.':[['f-ok','🎂 Cumple hoy']],'Diego A.':[['f-ok','💯 Clase 100']],'Majo E.':[['f-new','2ª semana']],'Iván R.':[['','14 días sin venir · regresó']]};
+let claseCoach='0-0700-cf';
+function roster(c){const n=Math.min(c.base-(S.liberados[c.id]||0),NOMBRES.length),off=Math.floor(rnd(c.id)*NOMBRES.length);
+  const L=[];for(let i=0;i<n;i++){const nm=NOMBRES[(off+i)%NOMBRES.length];L.push({n:nm,niv:['RX','Intermedio','Principiante'][Math.floor(rnd(nm)*3)],f:FLAGS[nm]||[]})}
+  if(S.reservas.includes(c.id))L.unshift({n:yo(),niv:S.me.nivel,f:[...(S.me.lesion?[['f-inj',S.me.lesion.split(':')[0]]]:[]),...(S.ready?[[S.ready.k==='verde'?'f-ok':S.ready.k==='rojo'?'f-inj':'f-new',S.ready.e+' '+S.ready.t]]:[])],me:1});
+  S.prospectos.filter(p=>p.clase===c.id).forEach(p=>L.unshift({n:p.nombre,niv:p.exp,f:[['f-new','🟠 Primera vez · clase gratis'],['','Le interesa: '+p.interes],['','Vino de: '+(p.origenTxt||'—')]],nuevo:1}));
+  return L}
+const hhmm=m=>Math.floor(m/60)+':'+String(m%60).padStart(2,'0');
+/* Asistencia: llega sola desde los lectores de huella del box (aquí simulada) */
+function llegada(c,a){const k=S.huella[c.id+a.n];if(k)return k;if(a.me||a.nuevo)return null;
+  const st=estado(c),m=minDe(c.h),v=rnd(a.n+c.id);
+  if(st!=='ok')return v>.12?hhmm(m-3-Math.floor(v*15)):null;
+  if(c.di===0&&m-AHORA.min<=30&&v>.5)return hhmm(Math.min(AHORA.min,m-3-Math.floor(v*25)));
+  return null}
+function renderCoach(){
+  const hoy=clasesDe(0),c=clase(claseCoach),R=roster(c),st=estado(c),dentro=R.filter(a=>llegada(c,a)).length;
+  const orden=[...R].sort((a,b)=>(b.nuevo|0)-(a.nuevo|0)||b.f.length-a.f.length);
+  const primera=S.prospectos.filter(p=>clase(p.clase)&&clase(p.clase).di===0).length+2;
+  $('#coach').innerHTML=`
+  <div class="row between wrap" style="margin-bottom:16px"><div><div class="mu sm">Coach · Lunes 5 oct</div><div class="h1">Hola, Coach Beto</div></div>
+    <div class="row wrap" style="gap:8px"><span class="chip grn">${hoy.length} clases hoy</span><span class="chip amb">${primera} vienen por primera vez</span></div></div>
+  <div class="grid g-coach">
+    <div class="card clist" style="padding:8px" role="group" aria-label="Clases de hoy"><div class="lbl" style="padding:8px">Clases de hoy</div>
+      ${hoy.map(k=>`<button class="${k.id===claseCoach?'on':''}" aria-pressed="${k.id===claseCoach}" onclick="claseCoach='${k.id}';renderCoach()"><span class="hr">${k.h}</span><span class="grow"><b class="sm">${k.n}</b><div class="xs ${k.cancel?'r':'mu'}">${k.cancel?'Cancelada':k.c+' · '+Math.min(ocupados(k),k.cap)+'/'+k.cap}</div></span>${estado(k)==='curso'&&!k.cancel?'<span class="dot" style="background:var(--a)"></span>':''}</button>`).join('')}
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px"><div class="row between wrap" style="align-items:flex-start"><div><span class="tag t-${c.t}">${c.n}</span><div class="h2" style="margin-top:6px">${c.h} · ${c.c}</div><div class="xs mu" style="margin-top:3px">Cupo ${c.cap}${c.area?' · '+c.area:''}</div></div>
+        <button class="btn pri" onclick="hojaClase('${c.id}')"><span aria-hidden="true">✏️</span> Editar clase</button></div>
+        <div class="row between" style="margin-top:12px;align-items:flex-end"><div class="disp" style="font-size:40px;font-weight:800;line-height:1">${dentro}<span class="mu2">/${R.length}</span></div><span class="xs mu">entraron con huella</span></div>
+        <div class="bar" style="margin-top:6px"><i style="width:${R.length?dentro/R.length*100:0}%"></i></div>
+        ${c.cancel?`<div class="card sm" style="margin-top:10px;background:var(--rd);border-color:rgba(239,106,92,.5)"><b class="r">Clase cancelada</b> · motivo interno: ${esc(c.cancel)}. Se avisó por la app a quienes reservaron.</div>`:c.nota?`<div class="sm a" style="margin-top:10px">📌 Nota para quienes reservaron: ${esc(c.nota)}</div>`:''}
+        <div class="row wrap sm mu" style="margin-top:10px;gap:14px"><span>🟠 ${R.filter(a=>a.nuevo).length} primera vez</span><span>⚠️ ${R.filter(a=>a.f.some(f=>f[0]==='f-inj')).length} con cuidados</span><span>🎂 1 cumpleaños</span><span class="g"><span aria-hidden="true">●</span> Lector de huellas conectado · la asistencia se marca sola</span></div></div>
+      <div class="roster">${orden.map(a=>`<div class="ath ${llegada(c,a)?'in':''} ${a.nuevo?'new':''}"><div class="av" aria-hidden="true" ${a.me?'style="background:var(--a);color:#241503"':''}>${esc(ini(a.n))}</div><div class="grow"><b class="sm">${esc(a.n)}</b><div class="xs mu">${esc(a.niv)}</div><div class="flags">${a.f.map(f=>`<span class="${f[0]}">${esc(f[1])}</span>`).join('')}</div></div>${(()=>{const t=llegada(c,a);return t?`<div class="hue"><b>👆 ${t}</b>entró</div>`:st==='fin'?'<div class="hue no"><b>✕</b>no vino</div>':`<div class="hue"><b>—</b>${a.nuevo?'registrar huella<br>en recepción':'aún no llega'}</div>`})()}</div>`).join('')}</div>
+      ${st==='ok'?`<button class="btn sm ghost" style="margin-top:12px" onclick="simHuella()"><span class="demo">DEMO</span>Simular que alguien pone su huella</button>`:''}
+      ${S.prospectos.length?'':`<div class="card sm mu" style="margin-top:12px"><span class="demo">DEMO</span>Agenda una clase en la vista <b>Clase gratis</b> y aparecerá aquí marcada en naranja.</div>`}
+    </div>
+    <div class="col">
+      ${(()=>{const pc=progDe(c.t),w=S.wods[pc];return`<div class="card"><div class="row between"><span class="lbl" style="display:flex;gap:6px;align-items:center">${PROG_E[pc]} WOD de ${PROG[pc]}</span><button class="btn sm pri" onclick="hojaClase('${c.id}','wod','${pc}')"><span aria-hidden="true">✏️</span> Editar WOD</button></div>
+        <div class="h2" style="margin:8px 0 4px">“${esc(w.nombre)}”</div>
+        ${w.cal?`<div class="xs mu" style="margin-top:6px">Calentamiento ${w.calMin}′</div><div class="sm">${esc(w.cal)}</div>`:''}
+        ${w.fz.length?`<div class="xs mu" style="margin-top:8px">Fuerza</div>${w.fz.map(f=>`<div class="sm">${esc(f.mov)} · ${esc(fzTxt(f))}</div>`).join('')}`:''}
+        <div class="xs mu" style="margin-top:8px">${w.tipo==='CARGA MÁX'?'Accesorios':metLbl(w)} · ${NIV[pc].RX}</div>${w.RX.map(m=>`<div class="sm">${esc(m)}</div>`).join('')}
+        <div class="xs mu2" style="margin-top:10px">Lo ven todas las clases de ${PROG[pc]} y los atletas que elijan ${PROG[pc]} en su app.</div></div>
+      <div class="card"><div class="lbl">Resultados de hoy · ${PROG[pc]}</div><div class="disp" style="font-size:34px;font-weight:800">${w.tipo==='EMOM'?'—':lbList(pc).length}</div><div class="xs mu">${w.tipo==='EMOM'?'EMOM: hoy no hay ranking':'atletas ya registraron su resultado'}</div>`})()}
+        <button class="btn sm full" style="margin-top:10px" onclick="window.tvP='${progDe(c.t)}';irVista('tv')">Ver en la pantalla del box</button></div>
+    </div>
+  </div>`}
+function simHuella(){const c=clase(claseCoach),a=roster(c).find(x=>!llegada(c,x));if(!a){toast('Ya llegaron todos');return}
+  S.hN++;const t=hhmm(Math.min(AHORA.min+S.hN,minDe(c.h)-1));S.huella[c.id+a.n]=t;save();renderCoach();toast(`👆 Huella en recepción: ${a.n} entró a las ${t}`)}
+const COACHES=['Coach Ana','Coach Beto','Coach Dani','Coach Luis','Todos los coaches'];
+const AREAS=['Box principal','Área de gym','Exterior'];
+function hojaClase(id,tab='clase',P){
+  const c=clase(id),ins=Math.min(ocupados(c),99);P=P||progDe(c.t);const w=S.wods[P];
+  const tabs=`<div class="chips" style="margin-bottom:6px" role="group" aria-label="Sección del panel"><button class="chip ${tab==='clase'?'on':''}" onclick="hojaClase('${id}','clase')">La clase</button><button class="chip ${tab==='wod'?'on':''}" onclick="hojaClase('${id}','wod','${P}')">WOD del día</button></div>`;
+  const head=`<div class="lbl">Panel de la clase</div><div class="h2" style="margin:4px 0 12px">${c.n} · ${DIAS[c.di].l} · ${c.h}</div>`;
+  if(tab==='clase'){
+    sheet(head+tabs+`
+    <label class="fld"><span>Coach</span><select id="ec">${COACHES.map(x=>`<option ${x===c.c?'selected':''}>${x}</option>`).join('')}</select></label>
+    <div class="fld"><span id="lcap">Cupo · ${ins} con reserva</span><div class="stepper"><button onclick="$('#ecap').value=Math.max(1,+$('#ecap').value-1)" aria-label="Restar un lugar">−</button><input id="ecap" type="number" inputmode="numeric" value="${c.cap}" aria-labelledby="lcap"><button onclick="$('#ecap').value=+$('#ecap').value+1" aria-label="Sumar un lugar">+</button></div></div>
+    <div class="fld"><span>Área</span><div class="chips" id="ear" role="group" aria-label="Área">${AREAS.map(x=>`<button class="chip ${x===(c.area||'Box principal')?'on':''}">${x}</button>`).join('')}</div></div>
+    <label class="fld"><span>Nota para quienes reservaron (les llega en la app)</span><textarea id="eno" rows="2" placeholder="Ej. Hoy traigan cuerda para saltar">${esc(c.nota)}</textarea></label>
+    <button class="btn pri full" style="margin-top:16px" id="eOk">Guardar cambios</button>
+    <div class="secbox">
+      ${c.cancel?`<div class="sm" style="margin-top:12px"><b class="r">Esta clase está cancelada</b> · ${esc(c.cancel)}</div><button class="btn full" style="margin-top:10px" id="eRe">Reabrir clase</button>`
+      :`<div class="lbl" style="margin-top:12px">Cancelar esta clase · el motivo no lo ven los atletas</div><div class="chips" id="emo" style="margin-top:8px;flex-wrap:wrap" role="group" aria-label="Motivo">${['Coach enfermo','Lluvia','Evento en el box','Mantenimiento','Otro'].map((x,i)=>`<button class="chip ${i?'':'on'}">${x}</button>`).join('')}</div>
+        <button class="btn red full" style="margin-top:10px" id="eCa">Cancelar clase y avisar a ${ins} ${ins===1?'persona':'personas'}</button>`}
+    </div>`);
+    $('#ear').onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('#ear .chip').forEach(x=>x.classList.toggle('on',x===b))};
+    const mine=S.reservas.includes(id),tuClase=()=>`Tu clase de ${c.n} del ${DIAS[c.di].l.toLowerCase()} a las ${c.h}`;
+    $('#eOk').onclick=()=>{const o=S.cls[id]||{},cap=Math.max(1,+$('#ecap').value||c.cap),nc=$('#ec').value,nota=$('#eno').value.trim();
+      const cambios=[];if(nc!==c.c)cambios.push('ahora la da '+nc);if(nota&&nota!==c.nota)cambios.push('nota: '+nota);
+      S.cls[id]={...o,c:nc,cap,area:$('#ear .on').textContent,nota};
+      if(mine&&cambios.length)S.avisos.push(tuClase()+': '+cambios.join(' · ')+'.');
+      save();cerrar();renderCoach();toast(cambios.length?`Guardado · avisamos a ${ins} ${ins===1?'persona':'personas'} con reserva`:'Cambios guardados')};
+    if(c.cancel)$('#eRe').onclick=()=>{S.cls[id]={...S.cls[id],cancel:null};save();cerrar();renderCoach();toast('Clase reabierta')};
+    else{$('#emo').onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('#emo .chip').forEach(x=>x.classList.toggle('on',x===b))};
+      $('#eCa').onclick=()=>{if(!confirm(`¿Cancelar ${c.n} de las ${c.h}? Se avisará a ${ins} ${ins===1?'persona':'personas'} con reserva.`))return;const mot=$('#emo .on').textContent;
+        S.cls[id]={...(S.cls[id]||{}),cancel:mot};
+        if(mine){S.reservas=S.reservas.filter(x=>x!==id);S.avisos.push(`${tuClase()} se canceló. No pierdes nada: reserva otro horario cuando quieras.`)}
+        save();cerrar();renderCoach();toast(`Clase cancelada · avisamos a ${ins} ${ins===1?'persona':'personas'}`)}}
+    return}
+  // ---- WOD del día (uno por disciplina)
+  const ta=(id,arr)=>`<textarea id="${id}" rows="4">${esc(arr.join('\n'))}</textarea>`;
+  let tipo=w.tipo;const fzD=w.fz.map(f=>({...f}));
+  const movOpts=sel=>Object.keys(S.prs).map(x=>`<option ${x===sel?'selected':''}>${x}</option>`).join('');
+  sheet(head+tabs+`
+    <div class="fld"><span>¿Qué WOD vas a programar?</span><div class="prog" role="group" aria-label="Disciplina">${Object.keys(PROG).map(k=>`<button class="${k===P?'on':''}" onclick="hojaClase('${id}','wod','${k}')"><span class="e">${PROG_E[k]}</span>${PROG[k]}<small>${PROG_SUB[k]}</small></button>`).join('')}</div></div>
+    <div class="xs mu" style="margin-top:8px">Lo ven todas las clases de ${PROG[P]} del día y los atletas que elijan ${PROG[P]} en su app.</div>
+    <label class="fld"><span>Nombre del WOD</span><input id="wn" value="${esc(w.nombre)}"></label>
+    <div class="secbox"><div class="lbl" style="margin-top:12px">A · Calentamiento</div>
+      <label class="fld"><span>Minutos</span><input id="wcm" type="number" inputmode="numeric" value="${w.calMin}"></label>
+      <label class="fld"><span>Qué hacen · déjalo vacío si no hay calentamiento</span><textarea id="wc" rows="2">${esc(w.cal)}</textarea></label></div>
+    <div class="secbox"><div class="lbl" style="margin-top:12px">B · Fuerza</div>
+      <div class="xs mu" style="margin-top:6px">Agrega las líneas que necesites. La app calcula el peso de cada atleta con su PR.</div>
+      <div id="fzRows"></div>
+      <button class="btn sm full" style="margin-top:10px" id="fzAdd">+ Agregar series</button></div>
+    <div class="secbox"><div class="lbl" style="margin-top:12px">C · Metcon</div>
+      <div class="fld"><span>Tipo</span><div class="chips" id="wtp" style="flex-wrap:wrap" role="group" aria-label="Tipo de metcon">${TIPOS_M.map(([v,l])=>`<button class="chip ${v===tipo?'on':''}" data-v="${v}">${l}</button>`).join('')}</div></div>
+      <label class="fld" id="wmBox"><span id="wml"></span><input id="wm" type="number" inputmode="numeric" value="${w.min}"></label>
+      <label class="fld"><span><span id="wlb">Movimientos</span> · ${NIV[P].RX} · uno por línea</span>${ta('wr',w.RX)}</label>
+      <div class="xs mu" style="margin-top:10px">Si dejas vacía una escala, se usa la versión ${NIV[P].RX}.</div>
+      <label class="fld"><span>${NIV[P].Intermedio}</span>${ta('wi',w.Intermedio)}</label>
+      <label class="fld"><span>${NIV[P].Principiante}</span>${ta('wp',w.Principiante)}</label></div>
+    <label class="fld"><span>Nota del coach</span><textarea id="wt" rows="2">${esc(w.nota)}</textarea></label>
+    <button class="btn pri full" style="margin-top:16px" id="wOk">Publicar WOD de ${PROG[P]}</button>`);
+  const drawFz=()=>{$('#fzRows').innerHTML=fzD.length?fzD.map((f,i)=>`<div class="fzE">
+      <select data-i="${i}" data-k="mov" aria-label="Movimiento de la línea ${i+1}">${movOpts(f.mov)}</select>
+      <label><span>Series</span><input data-i="${i}" data-k="ser" type="number" inputmode="numeric" value="${f.ser}"></label>
+      <label><span>Reps</span><input data-i="${i}" data-k="rep" value="${esc(f.rep)}"></label>
+      <label><span>% del PR</span><input data-i="${i}" data-k="pct" type="number" inputmode="numeric" value="${f.pct}"></label>
+      <button class="del" data-del="${i}" aria-label="Quitar línea ${i+1}">✕</button></div>`).join(''):'<div class="sm mu" style="margin-top:10px">Sin fuerza hoy.</div>'};
+  const syncTipo=()=>{$('#wmBox').style.display=tipo==='CARGA MÁX'?'none':'';$('#wml').textContent=tipo==='FOR TIME'?'Tiempo límite (min)':'Minutos';$('#wlb').textContent=tipo==='CARGA MÁX'?'Accesorios':'Movimientos'};
+  drawFz();syncTipo();
+  $('#fzRows').addEventListener('input',e=>{const t=e.target,i=t.dataset.i;if(i==null)return;const k=t.dataset.k;fzD[i][k]=k==='ser'||k==='pct'?+t.value:t.value});
+  $('#fzRows').addEventListener('change',e=>{const t=e.target,i=t.dataset.i;if(i!=null&&t.dataset.k==='mov')fzD[i].mov=t.value});
+  $('#fzRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;fzD.splice(+b.dataset.del,1);drawFz()});
+  $('#fzAdd').onclick=()=>{const l=fzD[fzD.length-1];fzD.push(l?{...l,pct:Math.min(100,l.pct+5)}:{mov:Object.keys(S.prs)[0],ser:3,rep:'5',pct:70});drawFz()};
+  $('#wtp').onclick=e=>{const b=e.target.closest('button');if(!b)return;tipo=b.dataset.v;$$('#wtp .chip').forEach(x=>x.classList.toggle('on',x===b));syncTipo()};
+  $('#wOk').onclick=()=>{const L=x=>$(x).value.split('\n').map(v=>v.trim()).filter(Boolean);
+    const rx=L('#wr');if(!rx.length&&tipo!=='CARGA MÁX'){toast(`Agrega al menos un movimiento en ${NIV[P].RX}.`);return}
+    const fz=fzD.filter(f=>f.ser>0&&String(f.rep).trim()).map(f=>({mov:f.mov,ser:+f.ser,rep:String(f.rep).trim(),pct:Math.min(110,Math.max(30,+f.pct||70))}));
+    S.wods[P]={nombre:$('#wn').value.trim()||w.nombre,cal:$('#wc').value.trim(),calMin:Math.max(1,+$('#wcm').value||8),fz,
+      tipo,min:Math.max(1,+$('#wm').value||w.min),RX:rx,Intermedio:L('#wi').length?L('#wi'):rx,Principiante:L('#wp').length?L('#wp'):rx,nota:$('#wt').value.trim()};
+    save();cerrar();renderCoach();toast(`✅ WOD de ${PROG[P]} publicado en la app y la pantalla`)}}
+
+/* =========================================================
+   DUEÑO
+   ========================================================= */
+const HRS=['6','7','8','9','12','18','19','20'];
+function occ(d,h){if(d===5)return h==='9'?92:h==='12'?0:0;if(h==='12')return d%2?34:0;const base={6:78,7:96,8:64,9:48,18:84,19:100,20:58}[h];return Math.max(15,Math.min(100,Math.round(base-(d===4?18:0)-(d===3?6:0)+(rnd(d+h)*10-5))))}
+function colorOcc(v){if(!v)return'background:transparent;color:var(--mu2)';const a=.12+v/100*.56;return`background:rgba(62,166,75,${a});color:#f4f2ea`}
+function renderDuenio(){
+  const pend=S.pedidos.length,riesgo=[['Iván R.','14 días','Venía 4 veces por semana a las 19:00'],['Alejandra M.','11 días','Su membresía se renueva en 3 días'],['Beto S.','10 días','Dejó de reservar después de una lesión de muñeca'],['Karla P.','9 días','Lleva 5 semanas: es cuando más gente abandona'],['Héctor L.','8 días','Bajó de 3 a 1 clase por semana']];
+  $('#duenio').innerHTML=`
+  <div class="row between wrap" style="margin-bottom:16px"><div><div class="mu sm">Panel del dueño · octubre 2026 · <span class="demo">DEMO</span>cifras de ejemplo</div><div class="h1">Así va Complex</div></div>
+    <div class="chips" role="group" aria-label="Periodo">${['Semana','Mes','Año'].map(x=>`<button class="chip ${x==='Mes'?'on':''}" onclick="toast('Demo: en la app real cambia el periodo')">${x}</button>`).join('')}</div></div>
+  <div class="kpis">
+    <div class="kpi hero"><span class="lbl">Socios activos</span><b>342</b><span class="d g">▲ 12 vs sep</span></div>
+    <div class="kpi hero"><span class="lbl">Ingresos del mes</span><b>${mxn(418600)}</b><span class="d g">▲ 6%</span></div>
+    <div class="kpi"><span class="lbl">Ocupación</span><b>71%</b><span class="d mu">promedio por clase</span></div>
+    <div class="kpi"><span class="lbl">Altas / bajas</span><b>18 / 6</b><span class="d mu">este mes</span></div>
+    <div class="kpi"><span class="lbl">Clase gratis → socio</span><b>59%</b><span class="d g">17 de 29 que llegaron</span></div>
+    <div class="kpi"><span class="lbl">Cafetería</span><b>${mxn(38200+S.pedidos.reduce((s,p)=>s+p.total,0))}</b><span class="d a">${pend?pend+' pedido(s) en curso':'+22% desde pedidos en app'}</span></div>
+  </div>
+  <div class="grid g-own" style="margin-top:14px">
+    <div class="card" style="grid-column:span 7"><div class="row between"><span class="lbl">Ocupación por horario</span><span class="xs mu">% del cupo</span></div>
+      <div class="hm" style="margin-top:12px" role="img" aria-label="Ocupación por horario: 7:00 y 19:00 casi llenas toda la semana; 9:00 y 12:00 con más espacio"><span></span>${HRS.map(h=>`<span class="h">${h}:00</span>`).join('')}
+      ${['Lun','Mar','Mié','Jue','Vie','Sáb'].map((d,i)=>`<span class="h" style="text-align:left;align-self:center">${d}</span>${HRS.map(h=>{const v=occ(i,h);return`<i style="${colorOcc(v)}">${v?v:'–'}</i>`}).join('')}`).join('')}</div>
+      <div class="insight"><span class="ic">💡</span><div class="sm"><b>19:00 está al 100% casi diario y 9:00 al 48%.</b> <span class="mu">La lista de espera de 19:00 tuvo 23 personas esta semana. Opciones: abrir una segunda clase de 19:00 en el área de gym, o dar un incentivo para venir a las 9:00.</span></div></div>
+    </div>
+    <div class="card" style="grid-column:span 5"><span class="lbl">De Instagram a socio · últimos 30 días</span>
+      <div class="funnel" style="margin-top:8px">
+        ${[['Visitas al link de clase gratis',612,100],['Agendaron clase gratis',41+S.prospectos.length,62],['Llegaron a su clase',29,44],['Se hicieron socios',17,30]].map(f=>`<div><div class="fb" style="width:${f[2]}%">${f[1]}</div><span class="sm mu">${f[0]}</span></div>`).join('')}
+      </div>
+      <div class="insight"><span class="ic">📲</span><div class="sm"><b>12 personas no llegaron a su clase gratis.</b> <span class="mu">La app les manda recordatorio por WhatsApp un día antes y 2 h antes.</span><div><button class="btn sm" style="margin-top:8px" onclick="toast('Demo: mensaje de WhatsApp listo para 12 personas')">Escribirles por WhatsApp</button></div></div></div>
+    </div>
+    ${(()=>{const base={'ig-bio':[12,5],'ig-reel':[10,4],'ig-historia':[4,1],'ig-dm':[7,3],'anuncio':[5,2],'invita':[2,2],'maps':[1,0],'directo':[0,0]};
+      S.prospectos.forEach(p=>{if(base[p.origen])base[p.origen][0]++});
+      const tot=Object.values(base).reduce((a,v)=>a+v[0],0),mx=Math.max(...Object.values(base).map(v=>v[0]));
+      return`<div class="card" style="grid-column:span 12"><div class="row between wrap"><span class="lbl">¿De dónde llegan? · últimos 30 días</span><span class="xs mu">se registra solo con el link de cada publicación</span></div>
+      <div class="grid" style="margin-top:6px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
+        <div><div class="org xs mu2"><span></span><span>Origen</span><span style="text-align:right">Agendaron</span><span style="text-align:right">Socios</span></div>
+          ${ORIGENES.filter(o=>base[o[0]][0]).map(o=>{const v=base[o[0]];return`<div class="org"><span>${o[1]}</span><div><b>${o[2]}</b><div class="bar" style="margin-top:4px"><i style="width:${v[0]/mx*100}%"></i></div></div><b style="text-align:right">${v[0]}</b><b class="g" style="text-align:right">${v[1]}</b></div>`}).join('')}
+          <div class="xs mu" style="margin-top:6px">${tot} clases gratis agendadas · 17 socios nuevos</div></div>
+        <div><div class="lbl" style="margin-bottom:8px">Publicaciones que más socios trajeron</div>
+          ${[['🎬','Reel “Mujeres fuertes”',3,8],['🎬','Reel “Cualquier sábado en Complex”',1,2],['⭕','Historia del Simulador Híbrido',1,4],['📸','Link de la bio (sin publicación)',5,12]].map(r=>`<div class="row between sm" style="padding:8px 0;border-bottom:1px solid var(--line)"><span>${r[0]} ${r[1]}</span><span><b class="g">${r[2]} socio${r[2]===1?'':'s'}</b> <span class="xs mu">de ${r[3]}</span></span></div>`).join('')}
+          <div class="insight"><span class="ic" aria-hidden="true">💡</span><div class="sm"><b>De los invitados por socios se hicieron socios 2 de 2; de los anuncios, 2 de 5.</b> <span class="mu">Vale la pena premiar más las invitaciones. Además, ${38+(S.compartidas||0)} historias compartidas desde la app este mes etiquetaron a @cmplxfitnesscenter.</span></div></div></div>
+      </div></div>`})()}
+    <div class="card" style="grid-column:span 6"><div class="row between"><span class="lbl">En riesgo de irse</span><span class="chip red">${riesgo.length} personas</span></div>
+      ${riesgo.map(r=>`<div class="risk"><div class="av">${ini(r[0])}</div><div><b class="sm">${r[0]}</b> <span class="xs r">· ${r[1]} sin venir</span><div class="xs mu">${r[2]}</div></div><button class="btn sm" onclick="toast('Demo: WhatsApp listo: “¡Te extrañamos en Complex! ¿Te apartamos lugar mañana?”')" aria-label="Escribirle a ${r[0]}">Escribirle</button></div>`).join('')}
+    </div>
+    <div class="col" style="grid-column:span 6">
+      <div class="card"><div class="row between"><span class="lbl">Cobranza</span><span class="xs mu">próximos 7 días</span></div>
+        <div class="row between" style="margin-top:10px"><div><div class="disp" style="font-size:30px;font-weight:800">27</div><div class="xs mu">renovaciones</div></div><div><div class="disp g" style="font-size:30px;font-weight:800">21</div><div class="xs mu">con cobro automático</div></div><div><div class="disp a" style="font-size:30px;font-weight:800">6</div><div class="xs mu">pagan en recepción</div></div></div>
+        <button class="btn sm full" style="margin-top:12px" onclick="toast('Demo: link de pago enviado a 6 personas')">Mandar link de pago a los 6</button></div>
+      <div class="card"><div class="row between"><span class="lbl">Asistencia por huella</span><span class="chip grn">● 2 lectores conectados</span></div>
+        <div class="row between" style="margin-top:10px"><div><div class="disp" style="font-size:30px;font-weight:800">${41+S.hN}</div><div class="xs mu">entradas hoy</div></div><div><div class="disp r" style="font-size:30px;font-weight:800">37</div><div class="xs mu">reservaron y no vinieron (semana)</div></div><div><div class="disp a" style="font-size:30px;font-weight:800">9</div><div class="xs mu">entraron sin reservar</div></div></div>
+        <div class="insight"><span class="ic">💡</span><div class="sm"><b>Cruzar la huella con las reservas libera lugares.</b> <span class="mu">Regla sugerida: quien falta 2 veces sin cancelar recibe un aviso y pierde prioridad en horarios llenos, como las 19:00.</span></div></div></div>
+      <div class="card"><div class="row between"><span class="lbl">Simulador Híbrido · 17 oct</span><span class="chip amb">${46+(S.evento?1:0)}/80</span></div>
+        <div class="bar amb" style="margin-top:10px"><i style="width:${(46+(S.evento?1:0))/80*100}%"></i></div>
+        <div class="row wrap xs mu" style="margin-top:8px;gap:12px"><span>Playeras: XS 4 · S 11 · M 17 · L 10 · XL 4</span><span>Ingreso ${mxn((46+(S.evento?1:0))*590)}</span></div></div>
+      <div class="card"><span class="lbl">Cafetería · pedidos de la app</span>
+        ${(S.pedidos.length?S.pedidos.slice(-3).reverse():[]).map(p=>`<div class="row between sm" style="padding:6px 0;border-bottom:1px solid var(--line)"><span><b>${esc(p.quien)}</b> · ${esc(p.items)}</span><span class="a xs">${esc(p.cuando)}</span></div>`).join('')}
+        <div class="row between sm" style="padding:6px 0"><span><b>Luis G.</b> · 1× Shake de proteína</span><span class="mu xs">Entregado</span></div>
+        <div class="xs mu2">Lo más vendido: shake de proteína después de las clases de 7:00 y 19:00.</div></div>
+    </div>
+  </div>`}
+
+/* =========================================================
+   PANTALLA DEL BOX
+   ========================================================= */
+function renderTV(){
+  const P=window.tvP||'cf',w=S.wods[P],L=lbList(P);
+  $('#tv').innerHTML=`
+  <div class="panel"><div class="chips" style="margin-bottom:14px" role="group" aria-label="Disciplina en pantalla">${Object.keys(PROG).map(k=>`<button class="chip ${k===P?'on':''}" onclick="window.tvP='${k}';renderTV()">${PROG_E[k]} ${PROG[k]}</button>`).join('')}</div>
+    <div class="lbl" style="color:var(--a)">WOD · Lunes 5 oct · ${PROG[P]}</div><div class="wname" style="margin:8px 0 12px">${esc(w.nombre)}</div>
+    ${w.fz.length?`<div class="sm mu" style="margin-bottom:10px"><b>Fuerza:</b> ${esc(w.fz.map(f=>f.mov+' '+fzTxt(f)).join(' · '))}</div>`:''}
+    <div class="disp mu" style="font-size:26px;font-weight:700">${w.tipo==='CARGA MÁX'?'Accesorios':metLbl(w)} · ${NIV[P].RX}</div>${w.RX.map(m=>`<div class="tmov">${esc(m)}</div>`).join('')}
+    <div class="sm mu" style="margin-top:14px"><b>${NIV[P].Intermedio}:</b> ${esc(w.Intermedio.join(' · '))}<br><b>${NIV[P].Principiante}:</b> ${esc(w.Principiante.join(' · '))}</div></div>
+  <div class="panel"><div class="row between"><div class="lbl">Ranking en vivo${w.tipo==='CARGA MÁX'?' · carga máx.':''}</div><span class="xs mu">${PROG[P]}</span></div>
+    ${w.tipo==='EMOM'?'<div class="disp" style="font-size:30px;margin-top:20px">EMOM: hoy no hay ranking 💪<br><span class="mu" style="font-size:22px">El reto es completar cada minuto.</span></div>':L.slice(0,9).map((x,i)=>`<div class="lbt"><b style="color:${i<3?'var(--a)':'var(--mu2)'}">${i+1}</b><span>${esc(x.n)}<span class="xs mu"> · ${NIV[P][x.s]}</span></span><b>${scoreTxt(x,P)}</b></div>`).join('')}</div>
+  <div class="ticker"><span>🎂 FELIZ CUMPLE, REGINA &nbsp;·&nbsp; 💯 DIEGO LLEGA A 100 CLASES &nbsp;·&nbsp; 🔥 SIMULADOR HÍBRIDO SÁBADO 17 OCT · INSCRÍBETE EN LA APP &nbsp;·&nbsp; 🤝 SÁBADO DE TEAMS 9:00 &nbsp;·&nbsp; ☕️ PIDE TU SHAKE DESDE LA APP &nbsp;·&nbsp; #WEARECOMPLEX</span></div>`}
+
+/* =========================================================
+   CLASE GRATIS (link de la bio de Instagram)
+   ========================================================= */
+const ORIGENES=[['ig-bio','📸','Bio de Instagram','Bio de Instagram'],['ig-reel','🎬','Reel','Reel “Mujeres fuertes”'],['ig-historia','⭕','Historia','Historia del Simulador Híbrido'],['ig-dm','💬','DM (asistente)','DM de Instagram (asistente)'],['anuncio','📣','Anuncio','Anuncio en Instagram'],['invita','🤝','Invitación','Invitación de un socio (Mariana R.)'],['maps','📍','Google Maps','Google Maps'],['directo','🔗','Sin link','Sin link']];
+const origenDe=k=>ORIGENES.find(o=>o[0]===k)||ORIGENES[0];
+let G={paso:0,interes:null,exp:null,clase:null,hecho:null,origen:(()=>{try{const q=new URLSearchParams(location.search).get('src');return q&&ORIGENES.some(o=>o[0]===q)?q:'ig-bio'}catch(e){return'ig-bio'}})()};
+function renderGratis(){
+  const op=(k,v,e,t,s)=>`<button class="opt ${G[k]===v?'on':''}" onclick="G.${k}='${v}';G.paso++;renderGratis()"><span class="e">${e}</span><span class="grow"><b>${t}</b><div class="xs mu">${s}</div></span></button>`;
+  let body='';
+  if(G.hecho){const c=clase(G.hecho.clase);body=`<div style="text-align:center"><div style="font-size:54px">🎉</div><div class="h1" style="margin:6px 0">¡Te esperamos, ${esc(G.hecho.nombre.split(' ')[0])}!</div><p class="mu">${DIAS[c.di].l} · ${c.h} · ${c.n} con ${c.c}</p></div>
+    <div class="card" style="margin-top:16px"><div class="lbl">Qué llevar</div><ul style="padding-left:18px;margin-top:6px" class="sm"><li>Ropa cómoda y tenis</li><li>Agua (o pídela en nuestra cafetería)</li><li>Llega 10 min antes: en recepción registramos tu huella para entrar y tu coach te enseña el lugar</li></ul></div>
+    <div class="card" style="margin-top:10px"><div class="lbl">Dónde</div><p class="sm" style="margin-top:6px">Av. Concord s/n, col. La Purísima, El Marqués.<br><b>Atrás de Paseo Querétaro.</b></p><button class="btn sm" style="margin-top:10px" onclick="toast('Demo: aquí se abre Google Maps')">Cómo llegar</button></div>
+    <p class="xs mu" style="text-align:center;margin-top:14px">Te mandamos recordatorio por WhatsApp un día antes.</p>
+    <div class="card sm" style="margin-top:12px;border-style:dashed"><span class="lbl"><span class="demo">DEMO</span>Lo que guardó la app (no lo ve el cliente)</span><div style="margin-top:6px">Origen: <b class="a">${esc(G.hecho.org)}</b></div><div class="xs mu">Se queda en su ficha aunque se inscriba meses después.</div></div>
+    <div class="row" style="margin-top:14px"><button class="btn grow" onclick="G={paso:0,origen:G.origen};renderGratis()">Agendar otra</button><button class="btn pri grow" onclick="claseCoach='${G.hecho.clase}';irVista('coach')">Ver lo que ve el coach →</button></div>`}
+  else if(G.paso===0)body=`<div class="h2" style="margin-bottom:12px">¿Qué te llama más?</div>${op('interes','CrossFit','🔥','CrossFit','Clases guiadas en grupo, para todos los niveles')}${op('interes','Gym','🏋️','Gym','Área de pesas y máquinas con guía de coaches')}${op('interes','Híbrido','🏃','Híbrido','Correr + fuerza, para preparar retos y carreras')}${op('interes','No sé','🤔','Aún no sé','Te recomendamos por dónde empezar')}`;
+  else if(G.paso===1)body=`<div class="h2" style="margin-bottom:12px">¿Cómo andas de entrenamiento?</div>${op('exp','Principiante','🌱','Nunca he entrenado o hace mucho que no','Perfecto: aquí se empieza desde cero')}${op('exp','Intermedio','💪','Entreno de vez en cuando','Gym, correr, alguna clase')}${op('exp','RX','⚡️','Ya hago CrossFit','Vengo de otro box')}`;
+  else if(G.paso===2){const t=G.interes==='Híbrido'?'hib':'cf';const L=todas().filter(c=>c.t===t&&!c.cancel&&estado(c)==='ok'&&ocupados(c)<c.cap).slice(0,8);
+    body=`<div class="h2" style="margin-bottom:4px">Elige tu clase</div><p class="mu sm" style="margin-bottom:12px">${G.interes==='Gym'?'Te acompaña un coach en una clase de CrossFit para conocerte; luego te arma tu rutina de gym.':'Clases con lugar disponible.'}</p>
+    ${L.map(c=>`<button class="opt ${G.clase===c.id?'on':''}" onclick="G.clase='${c.id}';G.paso++;renderGratis()"><span class="disp" style="font-size:26px;font-weight:700;width:62px">${c.h}</span><span class="grow"><b>${DIAS[c.di].l}</b><div class="xs mu">${c.n} · ${c.c} · ${c.cap-ocupados(c)} lugares</div></span></button>`).join('')}`}
+  else body=`<div class="h2" style="margin-bottom:12px">Tus datos</div>
+    <label class="xs mu" for="gn">Nombre</label><input id="gn" autocomplete="name" placeholder="¿Cómo te llamas?" style="margin:4px 0 10px">
+    <label class="xs mu" for="gw">WhatsApp (10 dígitos)</label><input id="gw" inputmode="tel" autocomplete="tel" placeholder="Ej. 442 123 4567" style="margin-top:4px">
+    ${G.origen==='directo'?`<label class="xs mu" for="gco" style="display:block;margin-top:10px">¿Cómo nos conociste?</label><select id="gco" style="margin-top:4px"><option>Instagram</option><option>Me invitó un amigo</option><option>Google</option><option>Pasé por enfrente</option><option>Otro</option></select>`:''}
+    <label class="check"><input type="checkbox" id="gp"> <span>Acepto el <a href="#" onclick="event.preventDefault();toast('Demo: aquí se abre el aviso de privacidad de Complex')" style="color:var(--tx)">aviso de privacidad</a>. Usamos tu WhatsApp solo para confirmar y recordarte tu clase.</span></label>
+    <label class="check"><input type="checkbox" id="gpr"> <span>Quiero recibir promociones de Complex (opcional).</span></label>
+    <button class="btn pri full" style="margin-top:8px" onclick="agendar()">Agendar mi clase gratis</button>`;
+  $('#gratis').innerHTML=`
+  <div class="hero"><div class="row"><svg viewBox="0 0 100 100" style="width:44px" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#2a2b23"/><path d="M69.8 30.2 A28 28 0 1 0 69.8 69.8" fill="none" stroke="#3ea64b" stroke-width="15"/><circle cx="51" cy="50" r="13.5" fill="#f5a93b"/></svg><div><div class="lbl" style="color:var(--a)">Complex Fitness Center</div><div class="xs mu">Atrás de Paseo Querétaro</div></div></div>
+    <div class="h1" style="margin-top:14px;font-size:40px">Tu primera clase<br>es gratis</div><p class="sm" style="color:#dcdbd2;margin-top:8px">Salud, diversión, motivación y comunidad. Para todos los niveles.</p></div>
+  ${G.hecho?'':`<div class="steps">${[0,1,2,3].map(i=>`<i class="${i<=G.paso?'on':''}"></i>`).join('')}</div>`}
+  ${G.paso>0&&!G.hecho?`<button class="btn sm ghost" style="margin-bottom:10px" onclick="G.paso--;renderGratis()">‹ Atrás</button>`:''}
+  ${body}
+  ${G.hecho?'':`<details class="card sm" style="margin-top:24px;border-style:dashed"><summary class="lbl" style="cursor:pointer;min-height:40px;display:flex;align-items:center"><span class="demo">DEMO</span>¿Desde dónde abrió el link?</summary>
+    <div class="chips" style="flex-wrap:wrap;margin-top:8px" role="group" aria-label="Origen del link">${ORIGENES.map(o=>`<button class="chip ${o[0]===G.origen?'on':''}" onclick="G.origen='${o[0]}';G.demoAbierto=true;renderGratis()">${o[1]} ${o[2]}</button>`).join('')}</div>
+    <div class="xs mu" style="margin-top:8px">En la app real nadie elige esto: se lee solo del link, por ejemplo <b>complex.mx/gratis?src=${G.origen}</b>.</div></details>`}`;
+  if(G.demoAbierto){const dt=$('#gratis details');if(dt)dt.open=true}}
+function agendar(){const n=$('#gn').value.trim(),w=$('#gw').value.replace(/\D/g,'');
+  const mal=(id,msg)=>{$$('#gratis [aria-invalid]').forEach(x=>x.removeAttribute('aria-invalid'));const el=$(id);el.setAttribute('aria-invalid','true');el.focus();toast(msg)};
+  if(n.length<2){mal('#gn','Escribe tu nombre.');return}if(w.length!==10){mal('#gw','Tu WhatsApp debe tener 10 dígitos, ej. 442 123 4567.');return}if(!$('#gp').checked){mal('#gp','Acepta el aviso de privacidad para continuar.');return}
+  const o=origenDe(G.origen),org=G.origen==='directo'?'Sin link · dijo: '+($('#gco')?$('#gco').value:'—'):o[3];
+  S.prospectos.push({nombre:n,interes:G.interes,exp:G.exp,clase:G.clase,origen:G.origen,origenTxt:org});save();G.hecho={nombre:n,clase:G.clase,org};renderGratis();window.scrollTo(0,0)}
+
+/* =========================================================
+   ANÁLISIS
+   ========================================================= */
+function renderAnalisis(){$('#analisis').innerHTML=`
+  <div class="lbl" style="color:var(--a)">Corola · análisis para Complex Fitness Center · 5 oct 2026</div>
+  <div class="h1" style="font-size:44px;margin:8px 0 10px">Lo que vimos de Complex y lo que su app debería resolver</div>
+  <p class="mu" style="max-width:760px">Revisamos su Instagram (@cmplxfitnesscenter), su página de Facebook y las fichas públicas en directorios de gimnasios. Lo marcado como <span class="a">hipótesis</span> hay que confirmarlo en la cita.</p>
+
+  <h2>Los números</h2>
+  <div class="facts">
+    <div class="kpi"><span class="lbl">Instagram</span><b>14 mil</b><span class="d mu">seguidores · 1,154 posts</span></div>
+    <div class="kpi"><span class="lbl">Facebook</span><b>3.1 mil</b><span class="d mu">100% lo recomienda (11)</span></div>
+    <div class="kpi"><span class="lbl">Reseñas</span><b>4.9 ★</b><span class="d mu">~75–79 reseñas en directorios</span></div>
+    <div class="kpi"><span class="lbl">Horario</span><b>6–21 h</b><span class="d mu">L–V · sáb 9–13 · dom cerrado</span></div>
+  </div>
+
+  <h2>Quiénes son</h2>
+  <div class="mapa">
+    <div class="card"><div class="h3">Su promesa</div><ul style="margin-top:8px"><li>“El CrossFit más grande de Querétaro” (lo dice su Facebook).</li><li>CrossFit + Gym + Híbrido en un solo lugar, con cafetería propia.</li><li>“Para todos los niveles”; la primera clase es gratis.</li><li>Atrás de Paseo Querétaro, en El Marqués.</li><li>Control de acceso con huella digital.</li></ul></div>
+    <div class="card"><div class="h3">Su voz</div><ul style="margin-top:8px"><li>Comunidad y buen humor: “sudar sabroso”, “sufrir sabroso pero acompañados”.</li><li>Celebran cada pequeña victoria, desde el primer pull-up.</li><li>Mensaje fuerte para mujeres: “mujeres fuertes, independientes”.</li><li>“La técnica siempre va primero”.</li><li>#WeAreComplex · Team Complex.</li></ul></div>
+    <div class="card"><div class="h3">Lo que ya mueven</div><ul style="margin-top:8px"><li>Sábados de Teams a las 9:00.</li><li>Simulador Híbrido el 17 oct, con inscripción y playera incluida del 3 al 9 oct (merch con WOD Wear).</li><li>Coaches y atletas que compiten y ganan podios.</li><li>Destacadas: Híbrido, Comunidad, CrossFit, Cafetería, Info, Gym.</li></ul></div>
+  </div>
+
+  <h2>Dónde se les va dinero (hipótesis)</h2>
+  <div class="mapa">
+    <div class="card"><div class="h3">🎟️ La clase gratis es manual</div><p class="sm" style="margin-top:6px">Su llamado es “agenda tu clase muestra”, pero no vimos un link para agendar: todo pasa por DM o teléfono. Se pierden prospectos de noche y no se mide cuántos se vuelven socios.</p></div>
+    <div class="card"><div class="h3">📅 Horarios y cupos sin visibilidad</div><p class="sm" style="margin-top:6px">No vimos horarios ni cupo por clase publicados. Con un box tan grande, las 7:00 y 19:00 seguro se llenan y las 9:00 no. Sin datos, no se puede mover gente.</p></div>
+    <div class="card"><div class="h3">🚪 Nadie avisa quién se está yendo</div><p class="sm" style="margin-top:6px">En un box, la mayoría de las bajas se ven venir semanas antes, cuando alguien deja de ir. Si no hay alerta, el coach se entera cuando ya canceló.</p></div>
+    <div class="card"><div class="h3">🏁 Eventos y merch por fuera</div><p class="sm" style="margin-top:6px">Las inscripciones al Simulador, tallas y pagos parecen manejarse por DM o formulario. La app los junta: inscripción, pago, talla y ola en un solo paso.</p></div>
+    <div class="card"><div class="h3">☕️ Cafetería sin pedido previo</div><p class="sm" style="margin-top:6px">Tienen cafetería y casi ningún box la tiene. Si pides tu shake desde la app y está listo al salir, se vende más y no hay fila a la hora pico.</p></div>
+    <div class="card"><div class="h3">📈 El progreso no se ve</div><p class="sm" style="margin-top:6px">Si el atleta no ve sus PRs ni sus avances, se desanima. Ver que ganó 23 kg en sentadilla es la mejor razón para renovar.</p></div>
+  </div>
+
+  <h2>Qué trae el prototipo</h2>
+  <div class="mapa">
+    <div class="card"><div class="lbl g">Indispensable</div><ul style="margin-top:10px"><li>Reservar clase con cupo y cancelar hasta 1 h antes</li><li>Lista de espera que te mete sola cuando se libera un lugar</li><li>WOD por disciplina: cada atleta elige CrossFit, Híbrido (HYROX) o Halterofilia y ve su WOD con 3 escalas</li><li>Asistencia automática desde los lectores de huella que ya usan (el coach no pasa lista)</li><li>Membresía, renovación, congelar y pagos</li><li>Registro de PRs y benchmarks</li></ul></div>
+    <div class="card"><div class="lbl a">Lo que la hace distinta</div><ul style="margin-top:10px"><li>Fuerza con varias series (series × reps al % del PR) y el peso de cada una calculado con tu PR, con dibujo de los discos</li><li>“¿Cómo llegas hoy?”: sugiere escala y el coach lo ve</li><li>Pantalla del box: WOD y ranking en vivo (el reloj es el del box)</li><li>Sábado de Teams con equipos armados al azar</li><li>Eventos con inscripción, ola, talla y plan de preparación</li><li>Pedir en la cafetería y recoger al salir de clase</li><li>Retos del mes, rachas, logros y muro con 👊</li><li>“Comparte en tu historia”: PRs, resultados y eventos con la marca de Complex y la etiqueta</li><li>Sus reels de Instagram dentro de la app</li></ul></div>
+    <div class="card"><div class="lbl">Para el negocio</div><ul style="margin-top:10px"><li>Clase gratis desde la bio de Instagram, con recordatorios por WhatsApp</li><li>Embudo de Instagram a socio y origen de cada cliente (bio, reel, historia, DM, anuncio, invitación)</li><li>Alerta de quién lleva días sin venir y botón para escribirle</li><li>Ocupación por horario con sugerencias</li><li>Cobranza: quién paga solo y a quién mandar link de pago</li><li>Tablet del coach: quién ya entró con huella, lesiones, primeras veces, cumpleaños y clase 100</li><li>Quién reservó y no vino, cruzando huella y reservas</li><li>Ventas de cafetería y de eventos</li></ul></div>
+  </div>
+
+  <h2>Cómo la construiríamos</h2>
+  <div class="mapa">
+    <div class="card"><div class="lbl">Fase 1 · que funcione el día a día</div><p class="sm" style="margin-top:6px">Reservas, WOD, membresía y pagos, conexión con sus lectores de huella, clase gratis desde Instagram y tablet del coach. Se instala en el celular sin pasar por la App Store y se actualiza al momento.</p></div>
+    <div class="card"><div class="lbl">Fase 2 · comunidad y progreso</div><p class="sm" style="margin-top:6px">PRs, ranking, pantalla del box, retos, Teams, eventos con pago y cafetería.</p></div>
+    <div class="card"><div class="lbl">Fase 3 · retener y crecer</div><p class="sm" style="margin-top:6px">Alertas de quién se está yendo, WhatsApp automático, panel completo del dueño y, si lo piden, la versión en App Store y Google Play.</p></div>
+  </div>
+
+  <h2>Preguntas para la cita</h2>
+  <div class="card"><ul>
+    <li>¿Qué usan hoy para reservas y cobros (BoxMagic, Wodify, WodBuster, Excel, WhatsApp)? ¿Qué es lo que más les molesta?</li>
+    <li>¿Qué marca y modelo de lector de huellas usan (por ejemplo ZKTeco) y con qué programa? ¿Exporta registros o tiene conexión por red? ¿Cuántos lectores hay?</li>
+    <li>¿Cuántos socios activos tienen y cuántos coaches? ¿Cuántas clases muestra al mes y cuántas se inscriben?</li>
+    <li>¿Cómo cobran: efectivo, transferencia o tarjeta domiciliada? ¿Cuántos pagan tarde?</li>
+    <li>¿La cafetería es suya o concesionada? ¿Les interesa vender desde la app?</li>
+    <li>¿Qué horarios se llenan y cuáles quedan vacíos?</li>
+    <li>¿Cuántos eventos hacen al año y cómo manejan hoy las inscripciones?</li>
+    <li>¿Quieren su propia app en la App Store o les basta con que se instale desde un link?</li>
+  </ul></div>
+  <p class="src">Fuentes: perfil de Instagram @cmplxfitnesscenter (captura del 5 oct 2026), <a href="https://www.facebook.com/complexcenter/" target="_blank" rel="noopener">facebook.com/complexcenter</a>, <a href="https://evolutiongym.com.mx/queretaro/queretaro-qro/complex-fitness-center-queretaro-qro/" target="_blank" rel="noopener">evolutiongym.com.mx</a> y <a href="https://gimnasiosenmexico.com/queretaro/santiago-de-queretaro/complex-fitness-center/" target="_blank" rel="noopener">gimnasiosenmexico.com</a>. Nombres de coaches, atletas, precios y cifras del panel son de ejemplo.</p>`}
+
+/* =========================================================
+   MODO PRUEBA: versión que se manda a clientes para que la usen (solo la app del atleta).
+   Se activa con window.__PRUEBA=true (lo pone armar-prueba.py).
+   ========================================================= */
+const MISIONES=[
+  ['Reserva una clase para otro día',()=>S.reservas.some(id=>!DEF().reservas.includes(id))],
+  ['Abre tu WOD y elige qué vas a entrenar',()=>(S.visto||[]).includes('wod')],
+  ['Registra tu resultado de hoy',()=>Object.values(S.mios).some(Boolean)],
+  ['Revisa tu progreso o registra un PR',()=>(S.visto||[]).includes('progreso')],
+  ['Inscríbete al Simulador Híbrido',()=>!!S.evento]];
+const misionesHTML=()=>MISIONES.map(([t,f])=>{const ok=f();return`<div class="mis ${ok?'ok':''}"><i aria-hidden="true">${ok?'✓':''}</i><span>${t}</span><span class="sr" style="position:absolute;left:-9999px">${ok?'hecha':'pendiente'}</span></div>`}).join('');
+function bienvenida(){sheet(`<div class="lbl" style="color:var(--a)">Prueba de la app · Complex</div><div class="h2" style="margin:6px 0 6px">¡Bienvenido a la app!</div>
+  <p class="sm" style="color:#dcdbd2">Imagina que eres socio de Complex y esta es tu app. Es una versión de prueba: nada de lo que hagas es real ni se cobra.</p>
+  <div class="lbl" style="margin:16px 0 4px">Cosas que puedes probar</div>${misionesHTML()}
+  <button class="btn pri full" style="margin-top:16px" onclick="cerrar()">Empezar</button>`)}
+function iniciarPrueba(){document.body.classList.add('prueba');
+  let visto=false;try{visto=localStorage.getItem(LS+'-bienvenida')==='1';localStorage.setItem(LS+'-bienvenida','1')}catch(e){}
+  if(!visto)bienvenida()}
+
+/* ---------- arranque ---------- */
+const h0=window.__PRUEBA?'atleta':(location.hash||'#atleta').slice(1);
+try{irVista(['atleta','coach','duenio','tv','gratis','analisis'].includes(h0)?h0:'atleta')}catch(e){console.error(e);S=DEF();save();irVista('atleta')}
+/* Si alguien quedó en lista de espera y se recargó la página, se resuelve aquí */
+S.espera.forEach(id=>setTimeout(()=>resolverEspera(id),1500));
+if(window.__PRUEBA)iniciarPrueba();
+</script>
+</body>
+</html>
